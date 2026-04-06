@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>DreamLudo • Sign In & Create Account</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #0b2b26 0%, #0a1f1c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    /* Main card container */
+    .glass-card {
+      max-width: 500px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border-radius: 3rem;
+      padding: 2rem 1.8rem 2.2rem 1.8rem;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 120, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    /* Logo & header */
+    .game-brand {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .game-brand h1 {
+      font-size: 2.4rem;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, #FFE6B0, #FFB347);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      font-weight: 800;
+    }
+
+    .game-brand p {
+      color: #d9e2d4;
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+      font-weight: 500;
+    }
+
+    /* Tab styling */
+    .tab-buttons {
+      display: flex;
+      gap: 0.8rem;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 0.4rem;
+      border-radius: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      text-align: center;
+      background: transparent;
+      border: none;
+      padding: 0.7rem 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 2rem;
+      color: #e2f0e8;
+      cursor: pointer;
+      transition: all 0.25s;
+      backdrop-filter: blur(4px);
+    }
+
+    .tab-btn.active {
+      background: #f5b042;
+      color: #1e2a23;
+      box-shadow: 0 4px 12px rgba(245, 176, 66, 0.3);
+    }
+
+    /* Forms wrapper */
+    .forms-container {
+      position: relative;
+      min-height: 480px;
+    }
+
+    .form-panel {
+      transition: opacity 0.25s ease, visibility 0.25s;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .form-panel.hidden {
+      display: none;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* Input groups */
+    .input-group {
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-group label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffecb3;
+      margin-bottom: 0.4rem;
+    }
+
+    .input-field {
+      background: rgba(20, 30, 26, 0.7);
+      border: 1px solid rgba(255, 200, 100, 0.5);
+      border-radius: 1.5rem;
+      padding: 0.8rem 1rem;
+      color: #fef7e0;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      outline: none;
+      width: 100%;
+    }
+
+    .input-field:focus {
+      border-color: #ffbc6e;
+      background: #1e312b;
+      box-shadow: 0 0 0 3px rgba(255, 180, 70, 0.2);
+    }
+
+    .input-field::placeholder {
+      color: #a6bbaf;
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+
+    /* date & select style */
+    select.input-field {
+      appearance: none;
+      cursor: pointer;
+    }
+
+    /* button */
+    .btn-gold {
+      background: linear-gradient(95deg, #f5b042, #ffcf6e);
+      border: none;
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 2.5rem;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #1f2f28;
+      margin-top: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 0 #a55f1a;
+      transform: translateY(-2px);
+    }
+
+    .btn-gold:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #a55f1a;
+    }
+
+    /* message area */
+    .message {
+      margin-top: 1.2rem;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 2rem;
+      padding: 0.6rem 1rem;
+      font-size: 0.8rem;
+      text-align: center;
+      color: #ffe1a0;
+      border-left: 4px solid #f5b042;
+    }
+
+    .error-msg {
+      color: #ffbc8c;
+      background: rgba(120, 40, 20, 0.5);
+      border-left-color: #e06c3c;
+    }
+
+    .success-msg {
+      color: #d0ffc4;
+      background: rgba(40, 80, 50, 0.6);
+      border-left-color: #7ed957;
+    }
+
+    hr {
+      margin: 1rem 0;
+      border-color: rgba(255, 215, 150, 0.2);
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.7rem;
+      margin-top: 1.5rem;
+      color: #b9cfc1;
+    }
+
+    @media (max-width: 480px) {
+      .glass-card {
+        padding: 1.5rem;
+      }
+      .game-brand h1 {
+        font-size: 2rem;
+      }
+      .input-field {
+        padding: 0.7rem 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="glass-card">
+  <div class="game-brand">
+    <h1>✨ DREAM LUDO ✨</h1>
+    <p>roll • race • rule the board</p>
+  </div>
+
+  <!-- Tab Switcher -->
+  <div class="tab-buttons">
+    <button class="tab-btn active" id="loginTabBtn">🔐 LOGIN</button>
+    <button class="tab-btn" id="signupTabBtn">📝 CREATE ACCOUNT</button>
+  </div>
+
+  <div class="forms-container">
+    <!-- LOGIN FORM (mobile + password) -->
+    <div id="loginFormPanel" class="form-panel">
+      <form id="loginForm">
+        <div class="input-group">
+          <label>📱 MOBILE NUMBER</label>
+          <input type="tel" class="input-field" id="loginMobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric" required>
+        </div>
+        <div class="input-group">
+          <label>🔒 PASSWORD</label>
+          <input type="password" class="input-field" id="loginPassword" placeholder="Enter your password" required>
+        </div>
+        <button type="submit" class="btn-gold">▶ ENTER DREAM LOBBY</button>
+        <div id="loginMessage" class="message"></div>
+      </form>
+    </div>
+
+    <!-- SIGNUP FORM (full details) -->
+    <div id="signupFormPanel" class="form-panel hidden">
+      <form id="signupForm">
+        <div class="input-group">
+          <label>📞 MOBILE NUMBER *</label>
+          <input type="tel" class="input-field" id="signupMobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" required>
+        </div>
+        <div class="input-group">
+          <label>👤 FULL NAME</label>
+          <input type="text" class="input-field" id="fullName" placeholder="e.g. Rohan Mehta" required>
+        </div>
+        <div class="input-group">
+          <label>🏙️ CITY</label>
+          <input type="text" class="input-field" id="city" placeholder="Mumbai / Delhi / Kolkata ..." required>
+        </div>
+        <div class="input-group">
+          <label>🎂 DATE OF BIRTH</label>
+          <input type="date" class="input-field" id="dob" required>
+        </div>
+        <div class="input-group">
+          <label>🔑 PASSWORD</label>
+          <input type="password" class="input-field" id="signupPassword" placeholder="min 6 characters" required>
+        </div>
+        <button type="submit" class="btn-gold">✨ CREATE & PLAY</button>
+        <div id="signupMessage" class="message"></div>
+      </form>
+    </div>
+  </div>
+  <div class="footer-note">
+    🎲 DreamLudo — secure & fun. Your game zone!
+  </div>
+</div>
+
+<script>
+  // ---------- LOCAL STORAGE KEYS ----------
+  // We store users array: each user object = { mobile, name, city, dob, password }
+  const USERS_STORAGE_KEY = "dreamludo_users";
+
+  // Helper: load registered users from localStorage
+  function getUsers() {
+    const stored = localStorage.getItem(USERS_STORAGE_KEY);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch(e) {
+        return [];
+      }
+    }
+    return [];
+  }
+
+  // Helper: save users array
+  function saveUsers(users) {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+  }
+
+  // Helper: show message inside a container
+  function setMessage(element, text, isError = true) {
+    element.textContent = text;
+    element.classList.remove("success-msg", "error-msg");
+    if (isError) {
+      element.classList.add("error-msg");
+    } else {
+      element.classList.add("success-msg");
+    }
+    // auto clear after 3 seconds (optional, but good UX)
+    setTimeout(() => {
+      if (element.textContent === text) {
+        element.textContent = "";
+        element.classList.remove("error-msg", "success-msg");
+      }
+    }, 3500);
+  }
+
+  // validate mobile format (10 digits, numbers only)
+  function isValidMobile(mobile) {
+    return /^\d{10}$/.test(mobile);
+  }
+
+  // check if mobile already exists (for signup)
+  function isMobileRegistered(mobile, users) {
+    return users.some(user => user.mobile === mobile);
+  }
+
+  // ----- SIGNUP LOGIC -----
+  function handleSignup(event) {
+    event.preventDefault();
+
+    const mobileInput = document.getElementById("signupMobile");
+    const nameInput = document.getElementById("fullName");
+    const cityInput = document.getElementById("city");
+    const dobInput = document.getElementById("dob");
+    const passwordInput = document.getElementById("signupPassword");
+
+    const mobile = mobileInput.value.trim();
+    const fullName = nameInput.value.trim();
+    const city = cityInput.value.trim();
+    const dob = dobInput.value;
+    const password = passwordInput.value;
+
+    const msgDiv = document.getElementById("signupMessage");
+
+    // validation
+    if (!mobile || !fullName || !city || !dob || !password) {
+      setMessage(msgDiv, "❌ All fields are required!", true);
+      return;
+    }
+    if (!isValidMobile(mobile)) {
+      setMessage(msgDiv, "❌ Mobile must be exactly 10 digits (0-9 only).", true);
+      return;
+    }
+    if (password.length < 6) {
+      setMessage(msgDiv, "❌ Password must be at least 6 characters.", true);
+      return;
+    }
+    // optional: age validation (dob not in future)
+    const birthDate = new Date(dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    if (age < 10 || age > 100) {
+      setMessage(msgDiv, "📅 Please enter a valid date of birth (age 10-100).", true);
+      return;
+    }
+
+    const users = getUsers();
+    if (isMobileRegistered(mobile, users)) {
+      setMessage(msgDiv, "⚠️ Mobile number already registered! Please login.", true);
+      return;
+    }
+
+    // create new user object
+    const newUser = {
+      mobile: mobile,
+      name: fullName,
+      city: city,
+      dob: dob,
+      password: password   // In real world, hash passwords. For demo we store plain (but note: this is local frontend demo)
+    };
+    users.push(newUser);
+    saveUsers(users);
+
+    // show success, clear form & optionally switch to login
+    setMessage(msgDiv, "✅ Account created! Please login with mobile & password.", false);
+    // clear signup fields
+    mobileInput.value = "";
+    nameInput.value = "";
+    cityInput.value = "";
+    dobInput.value = "";
+    passwordInput.value = "";
+
+    // after 1.5 sec, auto-switch to login tab for better UX
+    setTimeout(() => {
+      // switch to login tab programmatically
+      document.getElementById("loginTabBtn").click();
+      // also show auto-fill maybe not but show message
+      const loginMsgDiv = document.getElementById("loginMessage");
+      setMessage(loginMsgDiv, "🎉 New account! Login using your mobile & password.", false);
+    }, 1500);
+  }
+
+  // ----- LOGIN LOGIC (mobile + password) -----
+  function handleLogin(event) {
+    event.preventDefault();
+
+    const mobile = document.getElementById("loginMobile").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const msgDiv = document.getElementById("loginMessage");
+
+    if (!mobile || !password) {
+      setMessage(msgDiv, "⚠️ Please enter mobile number and password.", true);
+      return;
+    }
+    if (!isValidMobile(mobile)) {
+      setMessage(msgDiv, "📱 Mobile number must be 10 digits.", true);
+      return;
+    }
+
+    const users = getUsers();
+    const matchedUser = users.find(user => user.mobile === mobile && user.password === password);
+
+    if (matchedUser) {
+      // Successful login: show welcome & store session mock (just for demo)
+      setMessage(msgDiv, `🎲 Welcome back, ${matchedUser.name}! Redirecting to game lobby...`, false);
+      // you could redirect or just simulate success. For GitHub Pages we display a success alert style.
+      // also we can reset login fields optionally
+      document.getElementById("loginMobile").value = "";
+      document.getElementById("loginPassword").value = "";
+      // optional: trigger a 'game start' simulation
+      setTimeout(() => {
+        alert(`✨ DREAM LOBBY ACTIVE ✨\nWelcome ${matchedUser.name} from ${matchedUser.city}!\nLet's roll the dice! 🎲`);
+        // In a real game you could redirect to game page: window.location.href = "/game.html";
+        // But for this demo, simply resetting message and keeping satisfaction.
+        msgDiv.textContent = "";
+        msgDiv.classList.remove("success-msg");
+      }, 800);
+    } else {
+      setMessage(msgDiv, "❌ Login failed! Incorrect mobile or password. Create an account first.", true);
+    }
+  }
+
+  // ----- TAB SWITCHING (with form visibility) -----
+  const loginPanel = document.getElementById("loginFormPanel");
+  const signupPanel = document.getElementById("signupFormPanel");
+  const loginTab = document.getElementById("loginTabBtn");
+  const signupTab = document.getElementById("signupTabBtn");
+
+  function setActiveTab(tabType) {
+    if (tabType === 'login') {
+      loginTab.classList.add("active");
+      signupTab.classList.remove("active");
+      loginPanel.classList.remove("hidden");
+      signupPanel.classList.add("hidden");
+      // clear messages on switch to avoid confusion
+      document.getElementById("loginMessage").textContent = "";
+      document.getElementById("loginMessage").classList.remove("error-msg","success-msg");
+    } else {
+      signupTab.classList.add("active");
+      loginTab.classList.remove("active");
+      signupPanel.classList.remove("hidden");
+      loginPanel.classList.add("hidden");
+      document.getElementById("signupMessage").textContent = "";
+      document.getElementById("signupMessage").classList.remove("error-msg","success-msg");
+    }
+  }
+
+  loginTab.addEventListener("click", () => setActiveTab('login'));
+  signupTab.addEventListener("click", () => setActiveTab('signup'));
+
+  // Attach event listeners to forms
+  const loginFormElement = document.getElementById("loginForm");
+  const signupFormElement = document.getElementById("signupForm");
+  loginFormElement.addEventListener("submit", handleLogin);
+  signupFormElement.addEventListener("submit", handleSignup);
+
+  // optional: for better UX, prefill demo? no, but we can insert demo data if localStorage empty for showcase? 
+  // To make it feel alive, if no users exist, we can add a demo user to show login works
+  (function seedDemoUserIfEmpty() {
+    const users = getUsers();
+    if (users.length === 0) {
+      // create a friendly demo user: mobile 9876543210, password dream123, name Test Player, city "Ludocity"
+      const demoUser = {
+        mobile: "9876543210",
+        name: "Lucky Player",
+        city: "Ludhiana",
+        dob: "1995-05-15",
+        password: "dream123"
+      };
+      users.push(demoUser);
+      saveUsers(users);
+      console.log("✨ Demo account created: Mobile: 9876543210 / Password: dream123");
+      // optional: show a tiny note in message area of login if empty, but not intrusive
+      const loginMsgDiv = document.getElementById("loginMessage");
+      if (loginMsgDiv && !loginMsgDiv.textContent) {
+        // show note after slight delay but only on first load
+        setTimeout(() => {
+          if (!localStorage.getItem("demo_notified")) {
+            setMessage(loginMsgDiv, "🎮 Demo: 9876543210 | pass: dream123", false);
+            localStorage.setItem("demo_notified", "true");
+            setTimeout(() => {
+              if (loginMsgDiv.textContent.includes("Demo")) loginMsgDiv.textContent = "";
+            }, 4000);
+          }
+        }, 500);
+      }
+    } else {
+      // if users exist but not empty, just do nothing. Could also add a check for a special 'demo' if not present? skip.
+      const hasDemo = users.some(u => u.mobile === "9876543210");
+      if (!hasDemo && users.length > 0) {
+        // optionally keep consistency but not mandatory
+        const demoExtra = {
+          mobile: "9876543210",
+          name: "Demo Star",
+          city: "BoardCity",
+          dob: "2000-01-01",
+          password: "dream123"
+        };
+        users.push(demoExtra);
+        saveUsers(users);
+      }
+    }
+  })();
+
+  // Additional: mobile input restricts letters (simple on input)
+  const mobileLogin = document.getElementById("loginMobile");
+  const mobileSignup = document.getElementById("signupMobile");
+  function restrictMobileInput(e) {
+    this.value = this.value.replace(/\D/g, '').slice(0,10);
+  }
+  mobileLogin.addEventListener("input", restrictMobileInput);
+  mobileSignup.addEventListener("input", restrictMobileInput);
+
+  // Prevent form resubmission annoying
+  window.addEventListener("load", () => {
+    // set default active just in case
+    setActiveTab('login');
+    // also reset any leftover messages
+  });
+</script>
+</body>
+</html>
