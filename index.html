@@ -3,303 +3,250 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>DreamLudo - Premium Ludo Game</title>
+  <title>DreamLudo - Premium Ludo Gaming</title>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      user-select: none;
     }
 
     body {
-      font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Poppins', 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Premium Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: linear-gradient(125deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+    }
+
+    .bg-animation::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 20% 50%, rgba(255,107,53,0.15) 0%, transparent 50%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      0% { transform: translate(-25%, -25%) rotate(0deg); }
+      100% { transform: translate(-25%, -25%) rotate(360deg); }
+    }
+
+    /* Glassmorphism Container */
+    .glass-container {
+      background: rgba(10, 10, 20, 0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 48px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.1);
+    }
+
+    /* Premium Button */
+    .premium-btn {
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(255,107,53,0.3);
+    }
+
+    .premium-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255,107,53,0.5);
+    }
+
+    /* Auth Section */
+    .auth-wrapper {
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 20px;
-      animation: bgPulse 10s ease infinite;
     }
 
-    @keyframes bgPulse {
-      0% { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-      50% { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
-      100% { background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); }
-    }
-
-    /* Auth Container */
-    .auth-container {
-      max-width: 520px;
+    .auth-card {
+      max-width: 500px;
       width: 100%;
-      background: rgba(255,255,255,0.98);
+      background: rgba(20, 20, 40, 0.9);
+      backdrop-filter: blur(20px);
       border-radius: 48px;
-      padding: 32px 28px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.3);
-      backdrop-filter: blur(10px);
-      transition: 0.3s;
+      padding: 40px;
+      border: 1px solid rgba(255,215,0,0.2);
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     }
 
-    .auth-container h1 {
+    .auth-card h1 {
       text-align: center;
-      background: linear-gradient(135deg, #f5af19, #f12711);
+      font-size: 2.8rem;
+      background: linear-gradient(135deg, #FFD700, #FF6B35);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      font-size: 2.6rem;
-      letter-spacing: 2px;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 10px;
     }
 
-    .auth-sub {
-      text-align: center;
-      color: #6c5ce7;
-      margin-bottom: 28px;
-      font-weight: 500;
-    }
-
-    .tab-bar {
+    .auth-tabs {
       display: flex;
-      gap: 12px;
-      margin-bottom: 28px;
+      gap: 15px;
+      margin: 30px 0;
     }
 
-    .tab-btn {
+    .auth-tab {
       flex: 1;
       padding: 12px;
-      border: none;
-      background: #f0f2f5;
-      border-radius: 40px;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .tab-btn.active {
-      background: linear-gradient(95deg, #f5af19, #f12711);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 30px;
       color: white;
-      box-shadow: 0 6px 14px rgba(241,39,17,0.4);
-    }
-
-    .input-group {
-      margin-bottom: 18px;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #2d3748;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e2e8f0;
-      border-radius: 32px;
-      font-size: 1rem;
-      transition: 0.2s;
-    }
-
-    .input-group input:focus {
-      outline: none;
-      border-color: #f5af19;
-    }
-
-    .gold-btn {
-      width: 100%;
-      background: linear-gradient(95deg, #f5af19, #f12711);
-      border: none;
-      padding: 14px;
-      border-radius: 40px;
       font-weight: bold;
-      font-size: 1.1rem;
-      color: white;
       cursor: pointer;
-      margin-top: 12px;
-      transition: 0.2s;
-    }
-
-    .gold-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(241,39,17,0.4);
-    }
-
-    .message {
-      margin-top: 18px;
-      padding: 10px;
-      border-radius: 32px;
       text-align: center;
-      font-size: 0.85rem;
+      transition: 0.3s;
     }
 
-    .error-msg {
-      background: #fed7d7;
-      color: #c53030;
+    .auth-tab.active {
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      border-color: transparent;
     }
 
-    .success-msg {
-      background: #c6f6d5;
-      color: #22543d;
+    .input-premium {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 30px;
+      color: white;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .input-premium:focus {
+      outline: none;
+      border-color: #FF6B35;
+      background: rgba(255,255,255,0.1);
     }
 
     .hidden {
       display: none;
     }
 
-    /* Game Container */
-    .game-container {
-      background: linear-gradient(145deg, #1e3a2f, #0f2c22);
-      border-radius: 48px;
+    /* Dashboard Layout */
+    .dashboard {
+      display: none;
       padding: 20px;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-      max-width: 900px;
-      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    .game-header {
-      background: linear-gradient(135deg, #2d3748, #1a202c);
-      padding: 16px 24px;
-      border-radius: 60px;
-      margin-bottom: 20px;
+    /* Sidebar Profile */
+    .profile-sidebar {
+      background: rgba(20, 20, 40, 0.9);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      padding: 25px;
+      border: 1px solid rgba(255,215,0,0.2);
+      text-align: center;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #FF6B35, #F7931E);
+      border-radius: 50%;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+      justify-content: center;
+      margin: 0 auto 15px;
+      font-size: 48px;
+      box-shadow: 0 10px 30px rgba(255,107,53,0.3);
     }
 
-    .player-badge {
-      background: linear-gradient(135deg, #f5af19, #f12711);
-      color: white;
-      padding: 8px 20px;
+    /* Points Card */
+    .points-card {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      border-radius: 24px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255,215,0,0.2);
+    }
+
+    .points-amount {
+      font-size: 48px;
+      font-weight: bold;
+      color: #FFD700;
+    }
+
+    /* Game Section */
+    .game-main {
+      background: rgba(20, 20, 40, 0.9);
+      backdrop-filter: blur(20px);
       border-radius: 32px;
-      font-weight: bold;
+      padding: 25px;
+      border: 1px solid rgba(255,215,0,0.2);
     }
 
-    .points-section {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      background: #0f1a15;
-      padding: 8px 20px;
-      border-radius: 40px;
-    }
-
-    .points-display {
-      background: #f5af19;
-      padding: 6px 18px;
-      border-radius: 32px;
-      font-weight: bold;
-      color: #1a202c;
-    }
-
-    .points-btn {
-      background: #2ecc71;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 32px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .points-btn.danger {
-      background: #e74c3c;
-    }
-
-    .stats-row {
-      display: flex;
-      gap: 20px;
-      background: #0f1a15;
-      padding: 8px 20px;
-      border-radius: 40px;
-    }
-
-    .stat {
-      color: #ffdd99;
-      font-weight: bold;
-    }
-
-    .logout-game-btn {
-      background: #e53e3e;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 32px;
-      color: white;
-      cursor: pointer;
-      font-weight: bold;
+    .ludo-board-container {
+      background: #1a472a;
+      border-radius: 24px;
+      padding: 20px;
     }
 
     canvas {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
       display: block;
       margin: 0 auto;
-      background: #f7e9c3;
-      border-radius: 24px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-      width: 100%;
-      height: auto;
-      cursor: pointer;
-    }
-
-    .game-controls {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .dice-area {
-      background: #1f2f28;
-      padding: 12px 24px;
-      border-radius: 60px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .dice {
-      width: 65px;
-      height: 65px;
-      background: white;
       border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.8rem;
-      font-weight: bold;
-      box-shadow: inset 0 0 0 2px #333, 0 8px 16px black;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
-    .roll-btn {
-      background: linear-gradient(95deg, #f5af19, #f12711);
-      border: none;
-      padding: 12px 28px;
-      border-radius: 40px;
-      font-weight: bold;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: 0.1s linear;
-      color: white;
+    /* Grid Layout */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 25px;
     }
 
-    .turn-indicator {
-      background: #f5e6d3;
-      padding: 8px 24px;
-      border-radius: 32px;
-      font-weight: bold;
-      font-size: 1.1rem;
+    @media (max-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* Modal for points */
+    /* Message Styles */
+    .message {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 30px;
+      text-align: center;
+      font-size: 0.85rem;
+    }
+    .error-msg { background: rgba(220,53,69,0.2); color: #ff6b6b; }
+    .success-msg { background: rgba(46,204,113,0.2); color: #2ecc71; }
+
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -307,103 +254,115 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       justify-content: center;
       align-items: center;
       z-index: 1000;
     }
-
     .modal-content {
-      background: white;
+      background: #1a1a2e;
       padding: 30px;
       border-radius: 32px;
       max-width: 400px;
       width: 90%;
       text-align: center;
+      border: 1px solid rgba(255,215,0,0.3);
     }
-
     .modal-content input {
       width: 100%;
       padding: 12px;
       margin: 15px 0;
-      border: 2px solid #ddd;
-      border-radius: 32px;
-      font-size: 1.1rem;
-    }
-
-    @media (max-width: 700px) {
-      .game-header { flex-direction: column; align-items: stretch; }
-      .dice-area { flex-wrap: wrap; justify-content: center; }
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,215,0,0.3);
+      border-radius: 30px;
+      color: white;
     }
   </style>
 </head>
 <body>
+<div class="bg-animation"></div>
 
-<!-- AUTH SECTION -->
-<div id="authSection" class="auth-container">
-  <h1>🎲 DREAM LUDO</h1>
-  <div class="auth-sub">deposit • play • withdraw winnings</div>
-  <div class="tab-bar">
-    <button class="tab-btn active" id="authLoginTab">🔐 LOGIN</button>
-    <button class="tab-btn" id="authSignupTab">📝 SIGNUP</button>
-  </div>
-
-  <div id="loginPanel">
-    <div class="input-group"><label>📱 MOBILE NUMBER</label><input type="tel" id="loginMobile" placeholder="9876543210" maxlength="10"></div>
-    <div class="input-group"><label>🔒 PASSWORD</label><input type="password" id="loginPassword" placeholder="******"></div>
-    <button class="gold-btn" id="doLoginBtn">▶ PLAY & WIN</button>
-    <div id="loginMessage" class="message"></div>
-  </div>
-
-  <div id="signupPanel" class="hidden">
-    <div class="input-group"><label>📞 MOBILE</label><input type="tel" id="signupMobile" placeholder="10 digits" maxlength="10"></div>
-    <div class="input-group"><label>👤 FULL NAME</label><input type="text" id="fullName" placeholder="e.g. Rohan"></div>
-    <div class="input-group"><label>🏙️ CITY</label><input type="text" id="city" placeholder="Mumbai"></div>
-    <div class="input-group"><label>🎂 DATE OF BIRTH</label><input type="date" id="dob"></div>
-    <div class="input-group"><label>🔑 PASSWORD (min 6)</label><input type="password" id="signupPassword"></div>
-    <button class="gold-btn" id="doSignupBtn">✨ CREATE ACCOUNT</button>
-    <div id="signupMessage" class="message"></div>
+<!-- Auth Section -->
+<div id="authSection" class="auth-wrapper">
+  <div class="auth-card">
+    <h1>🎲 DREAM LUDO</h1>
+    <p style="text-align: center; color: #aaa;">Premium Gaming Platform</p>
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="authLoginTab">🔐 Login</div>
+      <div class="auth-tab" id="authSignupTab">📝 Signup</div>
+    </div>
+    <div id="loginPanel">
+      <input type="tel" id="loginMobile" class="input-premium" placeholder="Mobile Number" maxlength="10" style="margin-bottom: 15px;">
+      <input type="password" id="loginPassword" class="input-premium" placeholder="Password">
+      <button class="premium-btn" id="doLoginBtn" style="width: 100%; margin-top: 20px;">🎮 Play Now</button>
+      <div id="loginMessage" class="message"></div>
+    </div>
+    <div id="signupPanel" class="hidden">
+      <input type="tel" id="signupMobile" class="input-premium" placeholder="Mobile Number" maxlength="10" style="margin-bottom: 12px;">
+      <input type="text" id="fullName" class="input-premium" placeholder="Full Name" style="margin-bottom: 12px;">
+      <input type="text" id="city" class="input-premium" placeholder="City" style="margin-bottom: 12px;">
+      <input type="date" id="dob" class="input-premium" style="margin-bottom: 12px;">
+      <input type="password" id="signupPassword" class="input-premium" placeholder="Password (min 6 chars)">
+      <button class="premium-btn" id="doSignupBtn" style="width: 100%; margin-top: 20px;">✨ Create Account</button>
+      <div id="signupMessage" class="message"></div>
+    </div>
   </div>
 </div>
 
-<!-- GAME SECTION -->
-<div id="gameSection" class="game-container" style="display: none;">
-  <div class="game-header">
-    <div class="player-badge" id="gameUserName">Player</div>
-    <div class="points-section">
-      <span>💰 POINTS:</span>
-      <span class="points-display" id="pointsDisplay">0</span>
-      <button class="points-btn" id="depositBtn">+ DEPOSIT</button>
-      <button class="points-btn danger" id="withdrawBtn">- WITHDRAW</button>
+<!-- Dashboard -->
+<div id="dashboard" class="dashboard">
+  <div class="dashboard-grid">
+    <!-- Left Sidebar - Profile -->
+    <div class="profile-sidebar">
+      <div class="avatar" id="avatarIcon">🎲</div>
+      <h2 id="profileName" style="color: white;">Player Name</h2>
+      <p id="profileCity" style="color: #aaa; margin-bottom: 20px;">City</p>
+      <hr style="border-color: rgba(255,215,0,0.2); margin: 20px 0;">
+      <div class="points-card">
+        <p style="color: #aaa;">💰 Total Points</p>
+        <div class="points-amount" id="pointsDisplay">0</div>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+          <button class="premium-btn" id="depositBtn" style="flex: 1;">+ Deposit</button>
+          <button class="premium-btn" id="withdrawBtn" style="flex: 1; background: linear-gradient(135deg, #e74c3c, #c0392b);">- Withdraw</button>
+        </div>
+      </div>
+      <hr style="border-color: rgba(255,215,0,0.2); margin: 20px 0;">
+      <div style="display: flex; justify-content: space-around;">
+        <div><i class="fas fa-trophy" style="color: #FFD700;"></i> <span id="statWins" style="color: white;">0</span><br><small style="color: #aaa;">Wins</small></div>
+        <div><i class="fas fa-gamepad" style="color: #FFD700;"></i> <span id="statGames" style="color: white;">0</span><br><small style="color: #aaa;">Games</small></div>
+        <div><i class="fas fa-chart-line" style="color: #FFD700;"></i> <span id="winRate" style="color: white;">0%</span><br><small style="color: #aaa;">Win Rate</small></div>
+      </div>
+      <button class="premium-btn" id="gameLogoutBtn" style="width: 100%; margin-top: 20px; background: linear-gradient(135deg, #555, #333);">🚪 Exit Game</button>
     </div>
-    <div class="stats-row">
-      <span class="stat">🏆 Wins: <span id="statWins">0</span></span>
-      <span class="stat">🎲 Games: <span id="statGames">0</span></span>
+
+    <!-- Right Side - Game -->
+    <div class="game-main">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <div class="turn-indicator" id="turnText" style="background: linear-gradient(135deg, #FF6B35, #F7931E); padding: 10px 20px; border-radius: 30px; color: white; font-weight: bold;">🔴 RED's Turn</div>
+        <div class="dice-area" style="display: flex; gap: 15px; align-items: center;">
+          <div class="dice" id="diceValue" style="width: 60px; height: 60px; background: white; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold;">⚀</div>
+          <button class="premium-btn" id="rollDiceBtn">🎲 Roll Dice</button>
+        </div>
+      </div>
+      <div class="ludo-board-container">
+        <canvas id="ludoCanvas" width="600" height="600" style="width:100%; height:auto; max-width:600px; aspect-ratio:1/1"></canvas>
+      </div>
     </div>
-    <button class="logout-game-btn" id="gameLogoutBtn">🚪 EXIT</button>
-  </div>
-  <canvas id="ludoCanvas" width="700" height="700" style="width:100%; height:auto; max-width:700px; aspect-ratio:1/1"></canvas>
-  <div class="game-controls">
-    <div class="dice-area">
-      <div class="dice" id="diceValue">⚀</div>
-      <button class="roll-btn" id="rollDiceBtn">🎲 ROLL DICE</button>
-    </div>
-    <div class="turn-indicator" id="turnText">🔴 Red's Turn</div>
   </div>
 </div>
 
 <!-- Points Modal -->
 <div id="pointsModal" class="modal">
   <div class="modal-content">
-    <h3 id="modalTitle">Deposit Points</h3>
+    <h3 id="modalTitle" style="color: white;">Deposit Points</h3>
     <input type="number" id="pointsAmount" placeholder="Enter amount" min="1">
-    <button class="gold-btn" id="confirmPointsBtn">Confirm</button>
-    <button class="gold-btn" id="cancelPointsBtn" style="background:#666; margin-top:10px;">Cancel</button>
+    <button class="premium-btn" id="confirmPointsBtn" style="width: 100%;">Confirm</button>
+    <button class="premium-btn" id="cancelPointsBtn" style="width: 100%; margin-top: 10px; background: #555;">Cancel</button>
   </div>
 </div>
 
 <script>
-// ----------------------------- FIREBASE CONFIG -----------------------------
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCnAr-ljDz_n4ChwHYyk_pGsrLxQ89dJM4",
   authDomain: "dreamludo-37fd0.firebaseapp.com",
@@ -418,10 +377,9 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let currentFirebaseUser = null;
-let userStats = { wins: 0, games: 0, points: 0 };
+let currentUser = null;
+let userData = { wins: 0, games: 0, points: 100, name: "", city: "" };
 
-// Helper functions
 function mobileToEmail(mob) { return `${mob.trim()}@dreamludo.com`; }
 
 function showMsg(el, txt, isErr = true) {
@@ -430,7 +388,7 @@ function showMsg(el, txt, isErr = true) {
   setTimeout(() => { if (el.textContent === txt) { el.textContent = ""; el.className = "message"; } }, 4000);
 }
 
-// ---------- AUTH: SIGNUP ----------
+// Signup
 async function handleSignup() {
   const mobile = document.getElementById('signupMobile').value.trim();
   const name = document.getElementById('fullName').value.trim();
@@ -440,7 +398,7 @@ async function handleSignup() {
   const msgDiv = document.getElementById('signupMessage');
   
   if (!mobile || !name || !city || !dob || !pwd) return showMsg(msgDiv, "All fields required", true);
-  if (!/^\d{10}$/.test(mobile)) return showMsg(msgDiv, "10-digit mobile", true);
+  if (!/^\d{10}$/.test(mobile)) return showMsg(msgDiv, "10-digit mobile required", true);
   if (pwd.length < 6) return showMsg(msgDiv, "Password min 6 chars", true);
   
   const email = mobileToEmail(mobile);
@@ -448,46 +406,40 @@ async function handleSignup() {
     const cred = await auth.createUserWithEmailAndPassword(email, pwd);
     await cred.user.updateProfile({ displayName: name });
     await db.collection('users').doc(cred.user.uid).set({
-      mobile, fullName: name, city, dob, 
-      gamesPlayed: 0, gamesWon: 0, points: 100, // welcome bonus 100 points
-      createdAt: new Date()
+      mobile, fullName: name, city, dob, gamesPlayed: 0, gamesWon: 0, points: 100, createdAt: new Date()
     });
-    showMsg(msgDiv, "✅ Account created! Welcome bonus 100 points! Please login.", false);
+    showMsg(msgDiv, "✅ Account created! Welcome bonus 100 points!", false);
     document.getElementById('signupPanel').reset();
     document.getElementById('authLoginTab').click();
   } catch (err) {
-    let er = err.message;
-    if (er.includes("email-already-in-use")) er = "Mobile already registered";
-    showMsg(msgDiv, "❌ " + er, true);
+    showMsg(msgDiv, "❌ " + (err.message.includes("email-already-in-use") ? "Mobile already registered" : err.message), true);
   }
 }
 
-// ---------- AUTH: LOGIN ----------
+// Login
 async function handleLogin() {
   const mobile = document.getElementById('loginMobile').value.trim();
   const pwd = document.getElementById('loginPassword').value;
   const msgDiv = document.getElementById('loginMessage');
-  
   if (!mobile || !pwd) return showMsg(msgDiv, "Enter mobile & password", true);
   if (!/^\d{10}$/.test(mobile)) return showMsg(msgDiv, "Invalid mobile", true);
   
   const email = mobileToEmail(mobile);
   try {
     const cred = await auth.signInWithEmailAndPassword(email, pwd);
-    await loadGameAfterLogin(cred.user);
+    await loadDashboard(cred.user);
   } catch (err) {
-    let msg = err.code === 'auth/user-not-found' ? "No account found. Signup first." : "Wrong password";
-    showMsg(msgDiv, "❌ " + msg, true);
+    showMsg(msgDiv, "❌ " + (err.code === 'auth/user-not-found' ? "Account not found" : "Wrong password"), true);
   }
 }
 
-// ---------- LOAD GAME AFTER LOGIN ----------
-async function loadGameAfterLogin(user) {
-  currentFirebaseUser = user;
-  const docRef = await db.collection('users').doc(user.uid).get();
-  let data = docRef.exists ? docRef.data() : {};
+// Load Dashboard
+async function loadDashboard(user) {
+  currentUser = user;
+  const doc = await db.collection('users').doc(user.uid).get();
+  const data = doc.data() || {};
   
-  userStats = {
+  userData = {
     wins: data.gamesWon || 0,
     games: data.gamesPlayed || 0,
     points: data.points || 100,
@@ -495,95 +447,68 @@ async function loadGameAfterLogin(user) {
     city: data.city || "Ludopia"
   };
   
-  document.getElementById('gameUserName').innerHTML = `🎲 ${userStats.name} (${userStats.city})`;
-  document.getElementById('statWins').innerText = userStats.wins;
-  document.getElementById('statGames').innerText = userStats.games;
-  document.getElementById('pointsDisplay').innerText = userStats.points;
+  document.getElementById('profileName').innerText = userData.name;
+  document.getElementById('profileCity').innerText = userData.city;
+  document.getElementById('pointsDisplay').innerText = userData.points;
+  document.getElementById('statWins').innerText = userData.wins;
+  document.getElementById('statGames').innerText = userData.games;
+  const winRate = userData.games > 0 ? ((userData.wins / userData.games) * 100).toFixed(1) : 0;
+  document.getElementById('winRate').innerText = winRate + '%';
+  document.getElementById('avatarIcon').innerText = userData.name.charAt(0).toUpperCase();
   
   document.getElementById('authSection').style.display = 'none';
-  document.getElementById('gameSection').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'block';
   initLudoGame();
 }
 
-// ---------- POINTS SYSTEM (Deposit / Withdraw) ----------
-let currentModalAction = null;
-
+// Points System
+let modalAction = null;
 function openPointsModal(action) {
-  currentModalAction = action;
+  modalAction = action;
   document.getElementById('modalTitle').innerText = action === 'deposit' ? '💰 Deposit Points' : '💸 Withdraw Points';
   document.getElementById('pointsAmount').value = '';
   document.getElementById('pointsModal').style.display = 'flex';
 }
 
-async function confirmPointsTransaction() {
+async function confirmPoints() {
   const amount = parseInt(document.getElementById('pointsAmount').value);
-  if (isNaN(amount) || amount <= 0) {
-    alert("Please enter a valid amount");
-    return;
-  }
+  if (isNaN(amount) || amount <= 0) return alert("Enter valid amount");
+  if (modalAction === 'withdraw' && amount > userData.points) return alert("Insufficient points!");
   
-  if (!currentFirebaseUser) return;
-  
-  if (currentModalAction === 'withdraw' && amount > userStats.points) {
-    alert("Insufficient points!");
-    return;
-  }
-  
-  const newPoints = currentModalAction === 'deposit' ? userStats.points + amount : userStats.points - amount;
-  
-  try {
-    await db.collection('users').doc(currentFirebaseUser.uid).update({ points: newPoints });
-    userStats.points = newPoints;
-    document.getElementById('pointsDisplay').innerText = newPoints;
-    alert(`${currentModalAction === 'deposit' ? 'Deposited' : 'Withdrawn'} ${amount} points successfully!`);
-    document.getElementById('pointsModal').style.display = 'none';
-  } catch (err) {
-    alert("Transaction failed: " + err.message);
-  }
+  const newPoints = modalAction === 'deposit' ? userData.points + amount : userData.points - amount;
+  await db.collection('users').doc(currentUser.uid).update({ points: newPoints });
+  userData.points = newPoints;
+  document.getElementById('pointsDisplay').innerText = newPoints;
+  alert(`${modalAction === 'deposit' ? 'Deposited' : 'Withdrawn'} ${amount} points!`);
+  document.getElementById('pointsModal').style.display = 'none';
 }
 
-// ---------- LOGOUT ----------
-async function logoutGame() {
+async function logout() {
   await auth.signOut();
-  currentFirebaseUser = null;
   document.getElementById('authSection').style.display = 'flex';
-  document.getElementById('gameSection').style.display = 'none';
-  document.getElementById('loginMobile').value = "";
-  document.getElementById('loginPassword').value = "";
+  document.getElementById('dashboard').style.display = 'none';
 }
 
-// Update game stats after win
 async function updateGameStats(isWinner) {
-  if (!currentFirebaseUser) return;
-  const uid = currentFirebaseUser.uid;
-  const newGames = userStats.games + 1;
-  let newWins = userStats.wins;
+  if (!currentUser) return;
+  const newGames = userData.games + 1;
+  let newWins = userData.wins;
   let pointsEarned = 0;
+  if (isWinner) { newWins++; pointsEarned = 50; userData.points += pointsEarned; }
   
-  if (isWinner) {
-    newWins++;
-    pointsEarned = 50; // winner gets 50 points
-    userStats.points += pointsEarned;
-  }
-  
-  await db.collection('users').doc(uid).update({
-    gamesPlayed: newGames,
-    gamesWon: newWins,
-    points: userStats.points
-  }).catch(e => console.warn);
-  
-  userStats.games = newGames;
-  userStats.wins = newWins;
+  await db.collection('users').doc(currentUser.uid).update({
+    gamesPlayed: newGames, gamesWon: newWins, points: userData.points
+  });
+  userData.games = newGames; userData.wins = newWins;
   document.getElementById('statWins').innerText = newWins;
   document.getElementById('statGames').innerText = newGames;
-  document.getElementById('pointsDisplay').innerText = userStats.points;
-  
-  if (isWinner) {
-    alert(`🎉 You won! +${pointsEarned} points added!`);
-  }
+  document.getElementById('pointsDisplay').innerText = userData.points;
+  const winRate = newGames > 0 ? ((newWins / newGames) * 100).toFixed(1) : 0;
+  document.getElementById('winRate').innerText = winRate + '%';
+  if (isWinner) alert(`🎉 You won! +${pointsEarned} points!`);
 }
 
-// UI Event Listeners
+// Event Listeners
 document.getElementById('authLoginTab').onclick = () => {
   document.getElementById('authLoginTab').classList.add('active');
   document.getElementById('authSignupTab').classList.remove('active');
@@ -598,17 +523,17 @@ document.getElementById('authSignupTab').onclick = () => {
 };
 document.getElementById('doLoginBtn').onclick = handleLogin;
 document.getElementById('doSignupBtn').onclick = handleSignup;
-document.getElementById('gameLogoutBtn').onclick = logoutGame;
+document.getElementById('gameLogoutBtn').onclick = logout;
 document.getElementById('depositBtn').onclick = () => openPointsModal('deposit');
 document.getElementById('withdrawBtn').onclick = () => openPointsModal('withdraw');
-document.getElementById('confirmPointsBtn').onclick = confirmPointsTransaction;
+document.getElementById('confirmPointsBtn').onclick = confirmPoints;
 document.getElementById('cancelPointsBtn').onclick = () => document.getElementById('pointsModal').style.display = 'none';
 
-// Mobile input restriction
 document.querySelectorAll('input[type="tel"]').forEach(inp => inp.addEventListener('input', function() { this.value = this.value.replace(/\D/g, '').slice(0, 10); }));
 
-// Continue to Part 3 for Ludo Game Engine
-// ----------------------------- LUDO GAME ENGINE -----------------------------
+auth.onAuthStateChanged(async (user) => { if (user) await loadDashboard(user); });
+
+// Ludo Game Engine - Professional Edition
 let canvas, ctx;
 let boardState = [];
 let turn = 0;
@@ -618,47 +543,29 @@ let winnerDeclared = false;
 let canRoll = true;
 let selectedPiece = null;
 
-const colors = ['#e63946', '#2ecc71', '#f1c40f', '#3498db'];
-const colorNames = ['🔴 RED', '🟢 GREEN', '🟡 YELLOW', '🔵 BLUE'];
+const colors = ['#e74c3c', '#2ecc71', '#f1c40f', '#3498db'];
+const colorNames = ['RED', 'GREEN', 'YELLOW', 'BLUE'];
 const startPositions = [0, 13, 26, 39];
 
 function initLudoGame() {
   canvas = document.getElementById('ludoCanvas');
   ctx = canvas.getContext('2d');
-  boardState = [];
-  for (let c = 0; c < 4; c++) {
-    boardState[c] = [-1, -1, -1, -1];
-  }
-  turn = 0;
-  diceValue = 0;
-  gameActive = true;
-  winnerDeclared = false;
-  canRoll = true;
-  selectedPiece = null;
-  document.getElementById('turnText').innerHTML = `${colorNames[0]}'s Turn`;
+  boardState = [[-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1]];
+  turn = 0; diceValue = 0; gameActive = true; winnerDeclared = false; canRoll = true; selectedPiece = null;
+  document.getElementById('turnText').innerHTML = `🔴 ${colorNames[0]}'s Turn`;
   document.getElementById('diceValue').innerHTML = '⚀';
   drawBoard();
-  attachGameEvents();
-}
-
-function getDiceSymbol(val) {
-  const map = ['⚀', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-  return map[val] || '⚀';
+  attachEvents();
 }
 
 function rollDice() {
   if (!gameActive || winnerDeclared) return;
-  if (!canRoll) { alert("Wait! Move a piece first."); return; }
+  if (!canRoll) { alert("Move a piece first!"); return; }
   const dice = Math.floor(Math.random() * 6) + 1;
   diceValue = dice;
-  document.getElementById('diceValue').innerHTML = getDiceSymbol(dice);
+  document.getElementById('diceValue').innerHTML = ['⚀','⚀','⚁','⚂','⚃','⚄','⚅'][dice];
   canRoll = false;
-  let hasMoves = checkAnyMove(turn, dice);
-  if (!hasMoves) {
-    if (dice !== 6) changeTurn();
-    else changeTurn();
-    canRoll = true;
-  }
+  if (!checkAnyMove(turn, dice)) changeTurn();
   drawBoard();
 }
 
@@ -666,11 +573,7 @@ function checkAnyMove(color, dice) {
   for (let i = 0; i < 4; i++) {
     let pos = boardState[color][i];
     if (pos === -1 && dice === 6) return true;
-    if (pos >= 0 && pos < 52) {
-      let newPos = pos + dice;
-      if (newPos <= 51) return true;
-      else if (newPos >= 52 && newPos <= 57) return true;
-    }
+    if (pos >= 0 && pos < 52 && pos + dice <= 57) return true;
   }
   return false;
 }
@@ -695,7 +598,7 @@ function tryMovePiece(color, pieceIdx) {
       boardState[color][pieceIdx] = newPos;
       afterMove(color, dice);
       return true;
-    } else if (newPos >= 52 && newPos <= 57) {
+    } else if (newPos <= 57) {
       boardState[color][pieceIdx] = 52 + (newPos - 52);
       afterMove(color, dice);
       return true;
@@ -721,23 +624,16 @@ function isCellOccupiedByOpponent(cell, myColor) {
 function afterMove(color, dice) {
   drawBoard();
   let allHome = true;
-  for (let i = 0; i < 4; i++) {
-    let p = boardState[color][i];
-    if (!(p >= 52 && p <= 57)) allHome = false;
-  }
+  for (let i = 0; i < 4; i++) if (!(boardState[color][i] >= 52 && boardState[color][i] <= 57)) allHome = false;
+  
   if (allHome && !winnerDeclared) {
-    winnerDeclared = true;
-    gameActive = false;
-    alert(`🏆 ${colorNames[color]} WINS THE GAME! 🏆\n+50 points added!`);
+    winnerDeclared = true; gameActive = false;
+    alert(`🏆 ${colorNames[color]} WINS! +50 points!`);
     updateGameStats(true);
     return;
   }
-  if (dice === 6) {
-    canRoll = true;
-    drawBoard();
-  } else {
-    changeTurn();
-  }
+  if (dice === 6) canRoll = true;
+  else changeTurn();
   drawBoard();
 }
 
@@ -745,146 +641,93 @@ function changeTurn() {
   turn = (turn + 1) % 4;
   canRoll = true;
   selectedPiece = null;
-  document.getElementById('turnText').innerHTML = `${colorNames[turn]}'s Turn`;
+  const icons = {0:'🔴',1:'🟢',2:'🟡',3:'🔵'};
+  document.getElementById('turnText').innerHTML = `${icons[turn]} ${colorNames[turn]}'s Turn`;
   drawBoard();
 }
 
 function drawBoard() {
   if (!canvas || !ctx) return;
-  const size = 700;
-  canvas.width = size;
-  canvas.height = size;
-  ctx.clearRect(0, 0, size, size);
-  ctx.fillStyle = '#f7e9c3';
-  ctx.fillRect(0, 0, size, size);
+  const size = 600;
+  canvas.width = size; canvas.height = size;
+  ctx.fillStyle = '#f7e9c3'; ctx.fillRect(0,0,size,size);
   
   // Draw paths
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = '#b87333';
-  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) ctx.strokeRect(i * 175, j * 175, 175, 175);
+  ctx.lineWidth = 2; ctx.strokeStyle = '#b87333';
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++) ctx.strokeRect(i*150, j*150, 150, 150);
   
   // Home triangles
-  ctx.fillStyle = colors[0]; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(175, 0); ctx.lineTo(0, 175); ctx.fill();
-  ctx.fillStyle = colors[1]; ctx.beginPath(); ctx.moveTo(525, 0); ctx.lineTo(700, 0); ctx.lineTo(700, 175); ctx.fill();
-  ctx.fillStyle = colors[2]; ctx.beginPath(); ctx.moveTo(525, 525); ctx.lineTo(700, 525); ctx.lineTo(700, 700); ctx.fill();
-  ctx.fillStyle = colors[3]; ctx.beginPath(); ctx.moveTo(0, 525); ctx.lineTo(0, 700); ctx.lineTo(175, 700); ctx.fill();
+  [[0,0,0],[525,0,1],[525,525,2],[0,525,3]].forEach(([x,y,c]) => {
+    ctx.fillStyle = colors[c]; ctx.beginPath(); ctx.moveTo(x,y); ctx.lineTo(x+150,y); ctx.lineTo(x,y+150); ctx.fill();
+  });
   
   // Draw pieces
-  for (let c = 0; c < 4; c++) {
-    for (let p = 0; p < 4; p++) {
+  for(let c=0;c<4;c++) {
+    for(let p=0;p<4;p++) {
       let pos = boardState[c][p];
-      let x, y;
-      if (pos === -1) {
-        let homeX = (c === 0 ? 30 : c === 1 ? 530 : c === 2 ? 530 : 30);
-        let homeY = (c === 0 ? 30 : c === 1 ? 30 : c === 2 ? 530 : 530);
-        let off = (p * 35);
-        x = homeX + (c % 2 === 0 ? off % 100 : off % 100);
-        y = homeY + Math.floor(off / 100) * 35;
-      } else if (pos >= 0 && pos <= 51) {
-        let cell = pos;
-        let section = Math.floor(cell / 13);
-        let idx = cell % 13;
-        if (section === 0) { x = 150 + idx * 30; y = 350; }
-        else if (section === 1) { x = 500; y = 150 + idx * 30; }
-        else if (section === 2) { x = 500 - idx * 30; y = 500; }
-        else { x = 150; y = 500 - idx * 30; }
-        x = Math.min(650, Math.max(20, x));
-        y = Math.min(650, Math.max(20, y));
-      } else if (pos >= 52 && pos <= 57) {
-        let step = pos - 52;
-        let cx = (c === 0 ? 250 : c === 1 ? 450 : c === 2 ? 450 : 250);
-        let cy = (c === 0 ? 250 : c === 1 ? 250 : c === 2 ? 450 : 450);
-        x = cx + (step % 3) * 35;
-        y = cy + Math.floor(step / 3) * 35;
+      let x,y;
+      if(pos === -1) {
+        let hx = c===0?25:c===1?475:c===2?475:25;
+        let hy = c===0?25:c===1?25:c===2?475:475;
+        x = hx + (p%2)*60; y = hy + Math.floor(p/2)*60;
+      } else if(pos>=0 && pos<=51) {
+        let cell=pos, sec=Math.floor(cell/13), idx=cell%13;
+        if(sec===0){ x=120+idx*28; y=300; }
+        else if(sec===1){ x=450; y=120+idx*28; }
+        else if(sec===2){ x=450-idx*28; y=450; }
+        else { x=120; y=450-idx*28; }
+      } else if(pos>=52 && pos<=57) {
+        let step=pos-52;
+        let cx=c===0?220:c===1?380:c===2?380:220;
+        let cy=c===0?220:c===1?220:c===2?380:380;
+        x=cx+(step%3)*50; y=cy+Math.floor(step/3)*50;
       } else continue;
       
-      ctx.beginPath();
-      ctx.arc(x, y, 18, 0, 2 * Math.PI);
-      ctx.fillStyle = colors[c];
-      ctx.fill();
-      ctx.strokeStyle = 'white';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.fillStyle = 'white';
-      ctx.font = 'bold 20px sans-serif';
-      ctx.fillText(p + 1, x - 8, y + 8);
+      ctx.beginPath(); ctx.arc(x, y, 18, 0, 2*Math.PI);
+      ctx.fillStyle = colors[c]; ctx.fill();
+      ctx.strokeStyle = 'white'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle = 'white'; ctx.font='bold 18px sans-serif';
+      ctx.fillText(p+1, x-6, y+7);
     }
-  }
-  
-  // Highlight selected piece
-  if (selectedPiece && gameActive && !winnerDeclared) {
-    let [sc, sp] = [selectedPiece.color, selectedPiece.pieceIdx];
-    let pos = boardState[sc][sp];
-    let x = 0, y = 0;
-    if (pos === -1) {
-      let off = (sp * 35);
-      x = (sc === 0 ? 30 : sc === 1 ? 530 : sc === 2 ? 530 : 30) + (sc % 2 === 0 ? off % 100 : off % 100);
-      y = (sc === 0 ? 30 : sc === 1 ? 30 : sc === 2 ? 530 : 530) + Math.floor(off / 100) * 35;
-    } else if (pos >= 0 && pos <= 51) {
-      let cell = pos, section = Math.floor(cell / 13), idx = cell % 13;
-      if (section === 0) { x = 150 + idx * 30; y = 350; }
-      else if (section === 1) { x = 500; y = 150 + idx * 30; }
-      else if (section === 2) { x = 500 - idx * 30; y = 500; }
-      else { x = 150; y = 500 - idx * 30; }
-    } else {
-      let step = pos - 52;
-      let cx = (sc === 0 ? 250 : sc === 1 ? 450 : sc === 2 ? 450 : 250);
-      let cy = (sc === 0 ? 250 : sc === 1 ? 250 : sc === 2 ? 450 : 450);
-      x = cx + (step % 3) * 35;
-      y = cy + Math.floor(step / 3) * 35;
-    }
-    ctx.save();
-    ctx.shadowBlur = 12;
-    ctx.shadowColor = 'gold';
-    ctx.beginPath();
-    ctx.arc(x, y, 24, 0, 2 * Math.PI);
-    ctx.strokeStyle = 'gold';
-    ctx.lineWidth = 4;
-    ctx.stroke();
-    ctx.restore();
   }
 }
 
 function handleCanvasClick(e) {
-  if (!gameActive || winnerDeclared) return;
+  if(!gameActive || winnerDeclared) return;
   const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  let mouseX = (e.clientX - rect.left) * scaleX;
-  let mouseY = (e.clientY - rect.top) * scaleY;
+  const scale = canvas.width / rect.width;
+  let mx = (e.clientX - rect.left) * scale;
+  let my = (e.clientY - rect.top) * scale;
   
-  for (let c = 0; c < 4; c++) {
-    if (c !== turn) continue;
-    for (let p = 0; p < 4; p++) {
+  for(let c=0;c<4;c++) {
+    if(c !== turn) continue;
+    for(let p=0;p<4;p++) {
       let pos = boardState[c][p];
-      let x = 0, y = 0;
-      if (pos === -1) {
-        let off = (p * 35);
-        x = (c === 0 ? 30 : c === 1 ? 530 : c === 2 ? 530 : 30) + (c % 2 === 0 ? off % 100 : off % 100);
-        y = (c === 0 ? 30 : c === 1 ? 30 : c === 2 ? 530 : 530) + Math.floor(off / 100) * 35;
-      } else if (pos >= 0 && pos <= 51) {
-        let cell = pos, section = Math.floor(cell / 13), idx = cell % 13;
-        if (section === 0) { x = 150 + idx * 30; y = 350; }
-        else if (section === 1) { x = 500; y = 150 + idx * 30; }
-        else if (section === 2) { x = 500 - idx * 30; y = 500; }
-        else { x = 150; y = 500 - idx * 30; }
-      } else if (pos >= 52 && pos <= 57) {
-        let step = pos - 52;
-        let cx = (c === 0 ? 250 : c === 1 ? 450 : c === 2 ? 450 : 250);
-        let cy = (c === 0 ? 250 : c === 1 ? 250 : c === 2 ? 450 : 450);
-        x = cx + (step % 3) * 35;
-        y = cy + Math.floor(step / 3) * 35;
+      let x=0,y=0;
+      if(pos === -1) {
+        let hx = c===0?25:c===1?475:c===2?475:25;
+        let hy = c===0?25:c===1?25:c===2?475:475;
+        x = hx + (p%2)*60; y = hy + Math.floor(p/2)*60;
+      } else if(pos>=0 && pos<=51) {
+        let cell=pos, sec=Math.floor(cell/13), idx=cell%13;
+        if(sec===0){ x=120+idx*28; y=300; }
+        else if(sec===1){ x=450; y=120+idx*28; }
+        else if(sec===2){ x=450-idx*28; y=450; }
+        else { x=120; y=450-idx*28; }
+      } else if(pos>=52 && pos<=57) {
+        let step=pos-52;
+        let cx=c===0?220:c===1?380:c===2?380:220;
+        let cy=c===0?220:c===1?220:c===2?380:380;
+        x=cx+(step%3)*50; y=cy+Math.floor(step/3)*50;
       } else continue;
       
-      let dx = mouseX - x, dy = mouseY - y;
-      if (Math.hypot(dx, dy) < 22) {
-        if (selectedPiece && selectedPiece.color === c && selectedPiece.pieceIdx === p) {
-          if (tryMovePiece(c, p)) { selectedPiece = null; drawBoard(); return; }
+      if(Math.hypot(mx-x, my-y) < 22) {
+        if(selectedPiece && selectedPiece.color === c && selectedPiece.pieceIdx === p) {
+          if(tryMovePiece(c,p)) { selectedPiece = null; drawBoard(); return; }
         } else {
-          if (canRoll === false && diceValue > 0 && checkAnyMove(c, diceValue)) {
-            selectedPiece = { color: c, pieceIdx: p };
-            drawBoard();
-          } else if (canRoll === true) { alert("Roll dice first!"); }
+          if(!canRoll && diceValue>0 && checkAnyMove(c,diceValue)) {
+            selectedPiece = {color:c, pieceIdx:p}; drawBoard();
+          } else if(canRoll) alert("Roll dice first!");
         }
         return;
       }
@@ -892,17 +735,10 @@ function handleCanvasClick(e) {
   }
 }
 
-function attachGameEvents() {
+function attachEvents() {
   canvas.addEventListener('click', handleCanvasClick);
-  document.getElementById('rollDiceBtn').onclick = () => { if (gameActive && !winnerDeclared) rollDice(); };
+  document.getElementById('rollDiceBtn').onclick = () => { if(gameActive && !winnerDeclared) rollDice(); };
 }
-
-// Check auth state on load
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    await loadGameAfterLogin(user);
-  }
-});
 </script>
 </body>
 </html>
