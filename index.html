@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>DreamLudo • Firebase Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DreamLudo • Complete Firebase Setup</title>
   <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -13,265 +13,210 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, 'Inter', sans-serif;
+      font-family: 'Segoe UI', system-ui, sans-serif;
     }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(145deg, #0b2b26 0%, #0a1f1c 100%);
+      background: linear-gradient(135deg, #1a472a 0%, #0a2f1f 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
+      padding: 20px;
     }
 
-    .glass-card {
-      max-width: 520px;
+    .container {
+      max-width: 500px;
       width: 100%;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(12px);
-      border-radius: 3rem;
-      padding: 2rem 1.8rem 2.2rem 1.8rem;
-      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 120, 0.2);
-      transition: all 0.2s ease;
+      background: rgba(255,255,255,0.95);
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
 
-    .game-brand {
+    h1 {
       text-align: center;
-      margin-bottom: 1.5rem;
+      color: #ff6b35;
+      font-size: 2.5em;
+      margin-bottom: 10px;
     }
 
-    .game-brand h1 {
-      font-size: 2.4rem;
-      letter-spacing: 2px;
-      background: linear-gradient(135deg, #FFE6B0, #FFB347);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      font-weight: 800;
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
     }
 
-    .game-brand p {
-      color: #d9e2d4;
-      font-size: 0.85rem;
-      margin-top: 0.25rem;
-      font-weight: 500;
-    }
-
-    .tab-buttons {
+    .tab {
       display: flex;
-      gap: 0.8rem;
-      background: rgba(0, 0, 0, 0.35);
-      padding: 0.4rem;
-      border-radius: 3rem;
-      margin-bottom: 2rem;
+      gap: 10px;
+      margin-bottom: 30px;
     }
 
-    .tab-btn {
+    .tab button {
       flex: 1;
-      text-align: center;
-      background: transparent;
+      padding: 12px;
       border: none;
-      padding: 0.7rem 0;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 2rem;
-      color: #e2f0e8;
+      background: #f0f0f0;
+      border-radius: 25px;
       cursor: pointer;
-      transition: all 0.25s;
-    }
-
-    .tab-btn.active {
-      background: #f5b042;
-      color: #1e2a23;
-      box-shadow: 0 4px 12px rgba(245, 176, 66, 0.3);
-    }
-
-    .forms-container {
-      position: relative;
-      min-height: 490px;
-    }
-
-    .form-panel {
-      transition: opacity 0.25s ease;
-    }
-
-    .form-panel.hidden {
-      display: none;
-    }
-
-    .input-group {
-      margin-bottom: 1.2rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .input-group label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #ffecb3;
-      margin-bottom: 0.4rem;
-    }
-
-    .input-field {
-      background: rgba(20, 30, 26, 0.7);
-      border: 1px solid rgba(255, 200, 100, 0.5);
-      border-radius: 1.5rem;
-      padding: 0.8rem 1rem;
-      color: #fef7e0;
-      font-size: 0.95rem;
-      transition: all 0.2s;
-      outline: none;
-      width: 100%;
-    }
-
-    .input-field:focus {
-      border-color: #ffbc6e;
-      background: #1e312b;
-      box-shadow: 0 0 0 3px rgba(255, 180, 70, 0.2);
-    }
-
-    .btn-gold {
-      background: linear-gradient(95deg, #f5b042, #ffcf6e);
-      border: none;
-      width: 100%;
-      padding: 0.9rem;
-      border-radius: 2.5rem;
+      font-size: 16px;
       font-weight: bold;
-      font-size: 1rem;
-      color: #1f2f28;
-      margin-top: 0.5rem;
+      transition: 0.3s;
+    }
+
+    .tab button.active {
+      background: #ff6b35;
+      color: white;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 6px 0 #a55f1a;
+      transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background: #e55a2b;
       transform: translateY(-2px);
     }
 
-    .btn-gold:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #a55f1a;
-    }
-
     .message {
-      margin-top: 1rem;
-      background: rgba(0, 0, 0, 0.5);
-      border-radius: 2rem;
-      padding: 0.6rem 1rem;
-      font-size: 0.8rem;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 25px;
       text-align: center;
-      color: #ffe1a0;
-      border-left: 4px solid #f5b042;
+      font-size: 14px;
     }
 
-    .error-msg {
-      color: #ffbc8c;
-      background: rgba(120, 40, 20, 0.5);
-      border-left-color: #e06c3c;
+    .error {
+      background: #ffe0e0;
+      color: #d63031;
     }
 
-    .success-msg {
-      color: #d0ffc4;
-      background: rgba(40, 80, 50, 0.6);
-      border-left-color: #7ed957;
+    .success {
+      background: #d4edda;
+      color: #155724;
     }
 
-    .footer-note {
-      text-align: center;
-      font-size: 0.7rem;
-      margin-top: 1.5rem;
-      color: #b9cfc1;
+    .hidden {
+      display: none;
     }
 
-    .loader {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid #1f2f28;
-      border-radius: 50%;
-      border-top-color: transparent;
-      animation: spin 0.6s linear infinite;
-      margin-right: 6px;
-      vertical-align: middle;
+    .setup-guide {
+      background: #fff3e0;
+      padding: 15px;
+      border-radius: 15px;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #856404;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 480px) {
-      .glass-card { padding: 1.5rem; }
-      .game-brand h1 { font-size: 2rem; }
+    .setup-guide h4 {
+      margin-bottom: 8px;
+      color: #ff6b35;
     }
   </style>
 </head>
 <body>
+<div class="container">
+  <h1>🎲 DREAM LUDO</h1>
+  <div class="subtitle">Sign in to start playing</div>
 
-<div class="glass-card">
-  <div class="game-brand">
-    <h1>🎲 DREAM LUDO 🎲</h1>
-    <p>secure login • realtime • firebase</p>
+  <div class="tab">
+    <button id="loginTab" class="active">🔐 Login</button>
+    <button id="signupTab">📝 Create Account</button>
   </div>
 
-  <div class="tab-buttons">
-    <button class="tab-btn active" id="loginTabBtn">🔐 LOGIN</button>
-    <button class="tab-btn" id="signupTabBtn">📝 CREATE ACCOUNT</button>
+  <!-- Login Form -->
+  <div id="loginForm">
+    <form id="loginFormElement">
+      <div class="form-group">
+        <label>📱 Mobile Number</label>
+        <input type="tel" id="loginMobile" placeholder="9876543210" maxlength="10" required>
+      </div>
+      <div class="form-group">
+        <label>🔒 Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" required>
+      </div>
+      <button type="submit">Login & Play</button>
+      <div id="loginMessage" class="message"></div>
+    </form>
   </div>
 
-  <div class="forms-container">
-    <!-- LOGIN FORM (Mobile + Password) -->
-    <div id="loginFormPanel" class="form-panel">
-      <form id="loginForm">
-        <div class="input-group">
-          <label>📱 MOBILE NUMBER</label>
-          <input type="tel" class="input-field" id="loginMobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric" required>
-        </div>
-        <div class="input-group">
-          <label>🔒 PASSWORD</label>
-          <input type="password" class="input-field" id="loginPassword" placeholder="Enter your password" required>
-        </div>
-        <button type="submit" class="btn-gold" id="loginBtn">▶ ENTER DREAM LOBBY</button>
-        <div id="loginMessage" class="message"></div>
-      </form>
-    </div>
-
-    <!-- SIGNUP FORM (Mobile, Name, City, DOB, Password) -->
-    <div id="signupFormPanel" class="form-panel hidden">
-      <form id="signupForm">
-        <div class="input-group">
-          <label>📞 MOBILE NUMBER *</label>
-          <input type="tel" class="input-field" id="signupMobile" placeholder="10-digit number" maxlength="10" inputmode="numeric" required>
-        </div>
-        <div class="input-group">
-          <label>👤 FULL NAME</label>
-          <input type="text" class="input-field" id="fullName" placeholder="e.g. Rohan Mehta" required>
-        </div>
-        <div class="input-group">
-          <label>🏙️ CITY</label>
-          <input type="text" class="input-field" id="city" placeholder="Mumbai / Delhi / Kolkata ..." required>
-        </div>
-        <div class="input-group">
-          <label>🎂 DATE OF BIRTH</label>
-          <input type="date" class="input-field" id="dob" required>
-        </div>
-        <div class="input-group">
-          <label>🔑 PASSWORD</label>
-          <input type="password" class="input-field" id="signupPassword" placeholder="min 6 characters" required>
-        </div>
-        <button type="submit" class="btn-gold" id="signupBtn">✨ CREATE & PLAY</button>
-        <div id="signupMessage" class="message"></div>
-      </form>
-    </div>
+  <!-- Signup Form -->
+  <div id="signupForm" class="hidden">
+    <form id="signupFormElement">
+      <div class="form-group">
+        <label>📱 Mobile Number</label>
+        <input type="tel" id="signupMobile" placeholder="9876543210" maxlength="10" required>
+      </div>
+      <div class="form-group">
+        <label>👤 Full Name</label>
+        <input type="text" id="fullName" placeholder="John Doe" required>
+      </div>
+      <div class="form-group">
+        <label>🏙️ City</label>
+        <input type="text" id="city" placeholder="Mumbai" required>
+      </div>
+      <div class="form-group">
+        <label>🎂 Date of Birth</label>
+        <input type="date" id="dob" required>
+      </div>
+      <div class="form-group">
+        <label>🔑 Password (min 6 characters)</label>
+        <input type="password" id="signupPassword" minlength="6" required>
+      </div>
+      <button type="submit">Create Account</button>
+      <div id="signupMessage" class="message"></div>
+    </form>
   </div>
-  <div class="footer-note">
-    🔥 Secured with Firebase • Your game stats & profile are safe
+
+  <!-- Setup Guide (visible only if Firebase not configured) -->
+  <div id="setupGuide" class="setup-guide" style="display: none;">
+    <h4>⚙️ Firebase Setup Required</h4>
+    <p>1. Go to <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a><br>
+    2. Select project: <strong>dreamludo-37fd0</strong><br>
+    3. Enable <strong>Email/Password</strong> authentication<br>
+    4. Create Firestore Database in <strong>Test Mode</strong><br>
+    5. Refresh this page</p>
   </div>
 </div>
 
 <script>
-  // -------------------- FIREBASE CONFIGURATION --------------------
+  // Your Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyCnAr-ljDz_n4ChwHYyk_pGsrLxQ89dJM4",
     authDomain: "dreamludo-37fd0.firebaseapp.com",
@@ -283,288 +228,191 @@
   };
 
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+  let auth, db;
+  let firebaseInitialized = false;
 
-  // Use Firestore for additional user details (Name, City, DOB)
-  // Because Firebase Auth stores only phone & password (email-like using phone as uid)
-  // We'll link phone number as the primary identifier.
-
-  // Helper: format phone to E.164 standard (with country code +91 for India)
-  function formatMobileToE164(mobile) {
-    let clean = mobile.replace(/\D/g, '');
-    if (clean.length === 10) {
-      return "+91" + clean;
-    }
-    return null;
+  try {
+    firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    firebaseInitialized = true;
+    console.log("✅ Firebase connected!");
+  } catch (error) {
+    console.error("Firebase init error:", error);
+    document.getElementById('setupGuide').style.display = 'block';
   }
 
-  // UI Helpers
-  function setMessage(element, text, isError = true) {
+  // Helper functions
+  function showMessage(element, text, isError = true) {
     element.textContent = text;
-    element.classList.remove("success-msg", "error-msg");
-    if (isError) {
-      element.classList.add("error-msg");
-    } else {
-      element.classList.add("success-msg");
-    }
+    element.className = `message ${isError ? 'error' : 'success'}`;
     setTimeout(() => {
-      if (element.textContent === text) {
-        element.textContent = "";
-        element.classList.remove("error-msg", "success-msg");
-      }
-    }, 4000);
+      element.textContent = '';
+      element.className = 'message';
+    }, 5000);
   }
 
-  function setLoading(button, isLoading) {
-    if (isLoading) {
-      button.disabled = true;
-      const originalText = button.innerText;
-      button.setAttribute("data-original", originalText);
-      button.innerHTML = `<span class="loader"></span> processing...`;
-    } else {
-      button.disabled = false;
-      const original = button.getAttribute("data-original");
-      if (original) button.innerText = original;
-      else button.innerText = button.innerText.replace(/processing\.\.\./i, '').trim();
-    }
+  function mobileToEmail(mobile) {
+    return `${mobile}@dreamludo.com`;
   }
 
-  // -------------------- SIGNUP (Create user with phone + password, store extra data) --------------------
-  async function handleSignup(event) {
+  // Signup Function
+  async function signup(event) {
     event.preventDefault();
-    const mobileRaw = document.getElementById("signupMobile").value.trim();
-    const fullName = document.getElementById("fullName").value.trim();
-    const city = document.getElementById("city").value.trim();
-    const dob = document.getElementById("dob").value;
-    const password = document.getElementById("signupPassword").value;
-    const msgDiv = document.getElementById("signupMessage");
-    const signupButton = document.getElementById("signupBtn");
-
-    // Validations
-    if (!mobileRaw || !fullName || !city || !dob || !password) {
-      setMessage(msgDiv, "❌ All fields are required!", true);
+    if (!firebaseInitialized) {
+      showMessage(document.getElementById('signupMessage'), '⚠️ Firebase not configured. Check setup guide!', true);
       return;
     }
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(mobileRaw)) {
-      setMessage(msgDiv, "❌ Mobile must be exactly 10 digits (0-9).", true);
+
+    const mobile = document.getElementById('signupMobile').value.trim();
+    const name = document.getElementById('fullName').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const dob = document.getElementById('dob').value;
+    const password = document.getElementById('signupPassword').value;
+
+    // Validation
+    if (!mobile || !name || !city || !dob || !password) {
+      showMessage(document.getElementById('signupMessage'), '❌ Please fill all fields', true);
+      return;
+    }
+    if (!/^\d{10}$/.test(mobile)) {
+      showMessage(document.getElementById('signupMessage'), '❌ Mobile must be 10 digits', true);
       return;
     }
     if (password.length < 6) {
-      setMessage(msgDiv, "❌ Password must be at least 6 characters.", true);
+      showMessage(document.getElementById('signupMessage'), '❌ Password must be at least 6 characters', true);
       return;
     }
 
-    // Age validation (minimum 10 years)
-    const birthDate = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) age--;
-    if (age < 10 || age > 100) {
-      setMessage(msgDiv, "📅 Please enter valid DOB (age 10-100).", true);
-      return;
-    }
+    const email = mobileToEmail(mobile);
+    const signupMsg = document.getElementById('signupMessage');
 
-    const phoneE164 = formatMobileToE164(mobileRaw);
-    if (!phoneE164) {
-      setMessage(msgDiv, "⚠️ Invalid mobile format", true);
-      return;
-    }
-
-    setLoading(signupButton, true);
     try {
-      // 1. Create user with phone & password in Firebase Auth (using phone as provider)
-      // Firebase phone auth normally uses OTP, but for simplicity we use email-like method: 
-      // we can't directly create phone/password without SMS verification. Alternative: Use email/password but with virtual email = phone@dreamludo.com
-      // To meet requirement of "mobile + password" login, we will map each mobile to a unique email: mobile@dreamludo.firebase.com
-      const email = `${mobileRaw}@dreamludo.game`;
+      showMessage(signupMsg, 'Creating account...', false);
       
-      // Check if user exists (by email) using signInWithEmailAndPassword? we'll check via fetchProvidersForEmail
-      const methods = await auth.fetchSignInMethodsForEmail(email);
-      if (methods.length > 0) {
-        setMessage(msgDiv, "⚠️ Mobile number already registered! Please login.", true);
-        setLoading(signupButton, false);
-        return;
-      }
-
-      // Create user with email+password (behind the scenes we treat mobile as unique ID)
+      // Create user in Firebase Auth
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-      const firebaseUser = userCredential.user;
-
-      // 2. Store additional profile data in Firestore (users collection)
-      await db.collection("users").doc(firebaseUser.uid).set({
-        mobile: mobileRaw,
-        fullName: fullName,
+      const user = userCredential.user;
+      
+      // Update display name
+      await user.updateProfile({ displayName: name });
+      
+      // Save additional data to Firestore
+      await db.collection('users').doc(user.uid).set({
+        mobile: mobile,
+        fullName: name,
         city: city,
         dateOfBirth: dob,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         email: email
       });
-
-      // Also update display name in Auth profile
-      await firebaseUser.updateProfile({ displayName: fullName });
-
-      setMessage(msgDiv, `✅ Account created successfully! Welcome ${fullName}. Redirecting to lobby...`, false);
-      // clear signup form
-      document.getElementById("signupForm").reset();
       
-      // Auto switch to login tab after success and optionally auto fill?
+      showMessage(signupMsg, '✅ Account created successfully! Please login.', false);
+      
+      // Clear form and switch to login
+      document.getElementById('signupFormElement').reset();
       setTimeout(() => {
-        document.getElementById("loginTabBtn").click();
-        setMessage(document.getElementById("loginMessage"), "🎉 Account created! Login with your mobile & password.", false);
-      }, 1800);
+        document.getElementById('loginTab').click();
+      }, 1500);
       
     } catch (error) {
-      console.error(error);
-      let errMsg = error.message;
-      if (errMsg.includes("email-already-in-use")) errMsg = "Mobile number already registered. Try login.";
-      else if (errMsg.includes("weak-password")) errMsg = "Password too weak. Use at least 6 characters.";
-      else errMsg = "Signup failed: " + errMsg;
-      setMessage(msgDiv, errMsg, true);
-    } finally {
-      setLoading(signupButton, false);
-    }
-  }
-
-  // -------------------- LOGIN (Mobile + Password) --------------------
-  async function handleLogin(event) {
-    event.preventDefault();
-    const mobileRaw = document.getElementById("loginMobile").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
-    const msgDiv = document.getElementById("loginMessage");
-    const loginButton = document.getElementById("loginBtn");
-
-    if (!mobileRaw || !password) {
-      setMessage(msgDiv, "⚠️ Please enter mobile number and password.", true);
-      return;
-    }
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(mobileRaw)) {
-      setMessage(msgDiv, "📱 Mobile must be 10 digits.", true);
-      return;
-    }
-
-    const email = `${mobileRaw}@dreamludo.game`;
-    setLoading(loginButton, true);
-    try {
-      const userCredential = await auth.signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-      
-      // Fetch user profile from Firestore
-      const userDoc = await db.collection("users").doc(user.uid).get();
-      let displayName = user.displayName || "Player";
-      let cityInfo = "";
-      if (userDoc.exists) {
-        const data = userDoc.data();
-        displayName = data.fullName || displayName;
-        cityInfo = data.city ? ` from ${data.city}` : "";
-      }
-      
-      setMessage(msgDiv, `🎲 Welcome back, ${displayName}${cityInfo}! Entering DreamLudo...`, false);
-      // Clear login fields
-      document.getElementById("loginMobile").value = "";
-      document.getElementById("loginPassword").value = "";
-      
-      // Simulate game entry alert + optional reset
-      setTimeout(() => {
-        alert(`✨ DREAM LOBBY ACTIVE ✨\nWelcome ${displayName}!\nYour dice are waiting. Roll & rule! 🎲`);
-        msgDiv.textContent = "";
-        // In a full app you'd redirect: window.location.href = "/game-dashboard.html";
-      }, 800);
-      
-    } catch (error) {
-      console.error("Login error:", error);
-      let errorMsg = "❌ Login failed! ";
-      if (error.code === 'auth/user-not-found') {
-        errorMsg += "No account found with this mobile number. Please create an account.";
-      } else if (error.code === 'auth/wrong-password') {
-        errorMsg += "Incorrect password. Try again.";
-      } else if (error.code === 'auth/invalid-email') {
-        errorMsg += "Invalid mobile format.";
+      console.error('Signup error:', error);
+      let errorMsg = '❌ ';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMsg += 'This mobile number is already registered!';
+      } else if (error.code === 'auth/weak-password') {
+        errorMsg += 'Password is too weak!';
       } else {
         errorMsg += error.message;
       }
-      setMessage(msgDiv, errorMsg, true);
-    } finally {
-      setLoading(loginButton, false);
+      showMessage(signupMsg, errorMsg, true);
     }
   }
 
-  // -------------------- TAB SWITCHING --------------------
-  const loginPanel = document.getElementById("loginFormPanel");
-  const signupPanel = document.getElementById("signupFormPanel");
-  const loginTab = document.getElementById("loginTabBtn");
-  const signupTab = document.getElementById("signupTabBtn");
-
-  function setActiveTab(tabType) {
-    if (tabType === 'login') {
-      loginTab.classList.add("active");
-      signupTab.classList.remove("active");
-      loginPanel.classList.remove("hidden");
-      signupPanel.classList.add("hidden");
-      document.getElementById("loginMessage").textContent = "";
-    } else {
-      signupTab.classList.add("active");
-      loginTab.classList.remove("active");
-      signupPanel.classList.remove("hidden");
-      loginPanel.classList.add("hidden");
-      document.getElementById("signupMessage").textContent = "";
+  // Login Function
+  async function login(event) {
+    event.preventDefault();
+    if (!firebaseInitialized) {
+      showMessage(document.getElementById('loginMessage'), '⚠️ Firebase not configured. Check setup guide!', true);
+      return;
     }
-  }
 
-  loginTab.addEventListener("click", () => setActiveTab('login'));
-  signupTab.addEventListener("click", () => setActiveTab('signup'));
+    const mobile = document.getElementById('loginMobile').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const loginMsg = document.getElementById('loginMessage');
 
-  // Attach form handlers
-  document.getElementById("loginForm").addEventListener("submit", handleLogin);
-  document.getElementById("signupForm").addEventListener("submit", handleSignup);
+    if (!mobile || !password) {
+      showMessage(loginMsg, '❌ Please enter mobile and password', true);
+      return;
+    }
+    if (!/^\d{10}$/.test(mobile)) {
+      showMessage(loginMsg, '❌ Mobile must be 10 digits', true);
+      return;
+    }
 
-  // Mobile input sanitization (only digits, max 10)
-  const mobileLogin = document.getElementById("loginMobile");
-  const mobileSignup = document.getElementById("signupMobile");
-  function restrictMobile(e) {
-    this.value = this.value.replace(/\D/g, '').slice(0,10);
-  }
-  mobileLogin.addEventListener("input", restrictMobile);
-  mobileSignup.addEventListener("input", restrictMobile);
+    const email = mobileToEmail(mobile);
 
-  // Optional: check auth state to keep session persistence (not mandatory but friendly)
-  auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      // user is signed in, but we don't auto-redirect because it's a login page.
-      // However we can show a small status that there's an active session (optional)
-      // For UX, we won't disrupt but if they revisit, they'll see they can logout? Not needed, but we add a subtle sign.
-      console.log("Active session:", user.phoneNumber || user.email);
-      // we could add a "logout" button? Not required by spec, but it's nice.
-      const loginMsgDiv = document.getElementById("loginMessage");
-      if (loginMsgDiv && !loginMsgDiv.textContent && window.location.hash !== "auto") {
-        // just a silent background presence
+    try {
+      showMessage(loginMsg, 'Logging in...', false);
+      const userCredential = await auth.signInWithEmailAndPassword(email, password);
+      const user = userCredential.user;
+      
+      // Get user details from Firestore
+      const userDoc = await db.collection('users').doc(user.uid).get();
+      let userName = user.displayName || 'Player';
+      if (userDoc.exists) {
+        userName = userDoc.data().fullName || userName;
       }
+      
+      showMessage(loginMsg, `🎉 Welcome back, ${userName}! Entering DreamLudo...`, false);
+      
+      // Clear form
+      document.getElementById('loginFormElement').reset();
+      
+      // Simulate game launch
+      setTimeout(() => {
+        alert(`✨ DREAM LUDO LOBBY ✨\nWelcome ${userName}!\nGet ready to roll the dice! 🎲`);
+      }, 500);
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      let errorMsg = '❌ ';
+      if (error.code === 'auth/user-not-found') {
+        errorMsg += 'Account not found. Please sign up first!';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMsg += 'Wrong password!';
+      } else {
+        errorMsg += error.message;
+      }
+      showMessage(loginMsg, errorMsg, true);
     }
+  }
+
+  // Tab switching
+  document.getElementById('loginTab').addEventListener('click', () => {
+    document.getElementById('loginTab').classList.add('active');
+    document.getElementById('signupTab').classList.remove('active');
+    document.getElementById('loginForm').classList.remove('hidden');
+    document.getElementById('signupForm').classList.add('hidden');
+  });
+  
+  document.getElementById('signupTab').addEventListener('click', () => {
+    document.getElementById('signupTab').classList.add('active');
+    document.getElementById('loginTab').classList.remove('active');
+    document.getElementById('signupForm').classList.remove('hidden');
+    document.getElementById('loginForm').classList.add('hidden');
   });
 
-  // Small improvement: display demo hint? Because Firebase doesn't have seeded demo accounts,
-  // we'll show info that user can create any new account.
-  setTimeout(() => {
-    const loginMsg = document.getElementById("loginMessage");
-    if (loginMsg && !loginMsg.innerText && !localStorage.getItem("fb_demo_hint")) {
-      setMessage(loginMsg, "🎮 New to DreamLudo? Create an account using your mobile number!", false);
-      localStorage.setItem("fb_demo_hint", "true");
-      setTimeout(() => {
-        if (loginMsg.innerText.includes("Create an account")) loginMsg.innerText = "";
-      }, 5000);
-    }
-  }, 800);
-  
-  // Additional: Ensure the Firestore index rules are simple. Also note: Since Firestore security rules need to allow read/write,
-  // but we assume for demo the Firebase project has proper rules (allow read, write if request.auth != null). Usually in dev mode it's open.
-  // Show a small warning if any firestore error occurs.
-  window.onerror = function(errorMsg) {
-    console.warn(errorMsg);
-  };
+  // Form submissions
+  document.getElementById('signupFormElement').addEventListener('submit', signup);
+  document.getElementById('loginFormElement').addEventListener('submit', login);
+
+  // Mobile input restriction
+  document.querySelectorAll('input[type="tel"]').forEach(input => {
+    input.addEventListener('input', function(e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+  });
 </script>
 </body>
 </html>
