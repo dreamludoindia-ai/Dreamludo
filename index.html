@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Ludo Kingdom - Login</title>
+    <title>DreamLudo - Login</title>
     <style>
         * {
             margin: 0;
@@ -14,24 +14,69 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: white;
-            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: float 60s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-200px, -200px); }
         }
 
         .container {
+            position: relative;
+            z-index: 2;
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
+            padding: 20px;
+            animation: fadeIn 0.6s ease-out;
         }
 
-        /* Card Style - No Border */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card with outline */
         .card {
             background: white;
-            padding: 40px 35px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border-radius: 24px;
+            padding: 45px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(102, 126, 234, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+            border-color: rgba(102, 126, 234, 0.8);
         }
 
         .header {
@@ -40,30 +85,40 @@
         }
 
         .game-icon {
-            font-size: 55px;
-            margin-bottom: 12px;
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         h1 {
-            color: #1a1a2e;
-            font-size: 32px;
-            font-weight: 700;
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
             letter-spacing: -0.5px;
         }
 
         .subtitle {
             color: #666;
             font-size: 14px;
-            margin-top: 5px;
+            margin-top: 8px;
         }
 
-        /* Tab Buttons */
+        /* Tabs */
         .tabs {
             display: flex;
-            gap: 15px;
+            gap: 0;
             margin-bottom: 30px;
-            background: #f5f5f5;
-            padding: 5px;
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 4px;
         }
 
         .tab-btn {
@@ -76,20 +131,34 @@
             transition: all 0.3s;
             color: #666;
             text-align: center;
+            border-radius: 8px;
         }
 
         .tab-btn.active {
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
 
-        /* Form Styles */
+        /* Forms */
         .form {
             display: none;
         }
 
         .form.active {
             display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .input-group {
@@ -99,16 +168,19 @@
         input, select {
             width: 100%;
             background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             padding: 14px 18px;
             font-size: 15px;
-            color: #1a1a2e;
+            color: #333;
             transition: all 0.3s;
             font-family: inherit;
         }
 
         input:focus, select:focus {
+            border-color: #667eea;
             background: white;
-            box-shadow: 0 0 0 2px rgba(26, 26, 46, 0.1);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
 
         input::placeholder {
@@ -126,19 +198,26 @@
 
         .submit-btn {
             width: 100%;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
             padding: 14px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             color: white;
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
         .submit-btn:hover {
-            background: #2a2a4e;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
         }
 
         .divider {
@@ -154,7 +233,7 @@
             top: 50%;
             width: 100%;
             height: 1px;
-            background: #eee;
+            background: #e0e0e0;
         }
 
         .divider span {
@@ -165,23 +244,10 @@
             font-size: 13px;
         }
 
-        .guest-btn {
-            width: 100%;
-            background: #f5f5f5;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 500;
-            color: #1a1a2e;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .guest-btn:hover {
-            background: #e5e5e5;
-        }
-
         .error-message {
             background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 12px;
             padding: 12px 15px;
             margin-bottom: 20px;
             color: #d32f2f;
@@ -191,6 +257,8 @@
 
         .success-message {
             background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 12px;
             padding: 12px 15px;
             margin-bottom: 20px;
             color: #2e7d32;
@@ -198,22 +266,12 @@
             display: none;
         }
 
-        .toggle-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .toggle-link a {
-            color: #1a1a2e;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
         @media (max-width: 500px) {
             .card {
-                padding: 30px 25px;
+                padding: 35px 25px;
+            }
+            h1 {
+                font-size: 28px;
             }
             .row-2 {
                 flex-direction: column;
@@ -227,35 +285,29 @@
         <div class="card">
             <div class="header">
                 <div class="game-icon">🎲</div>
-                <h1>LUDO KINGDOM</h1>
-                <div class="subtitle">Roll the dice & conquer</div>
+                <h1>DreamLudo</h1>
+                <div class="subtitle">Roll the dice & live the dream</div>
             </div>
 
-            <!-- Tab Buttons -->
+            <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" onclick="switchTab('login')">Login</button>
                 <button class="tab-btn" onclick="switchTab('signup')">Create Account</button>
             </div>
 
-            <!-- Error & Success Messages -->
+            <!-- Messages -->
             <div id="errorMsg" class="error-message"></div>
             <div id="successMsg" class="success-message"></div>
 
             <!-- Login Form -->
             <div id="loginForm" class="form active">
                 <div class="input-group">
-                    <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10">
+                    <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" autocomplete="off">
                 </div>
                 <div class="input-group">
                     <input type="password" id="loginPassword" placeholder="Password">
                 </div>
                 <button class="submit-btn" onclick="handleLogin()">Login →</button>
-
-                <div class="divider">
-                    <span>OR</span>
-                </div>
-
-                <button class="guest-btn" onclick="guestLogin()">Play as Guest</button>
             </div>
 
             <!-- Signup Form -->
@@ -266,11 +318,13 @@
                 <div class="input-group">
                     <input type="tel" id="signupMobile" placeholder="Mobile Number" maxlength="10">
                 </div>
-                <div class="input-group">
-                    <input type="date" id="signupDob" placeholder="Date of Birth">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="signupCity" placeholder="City">
+                <div class="row-2">
+                    <div class="input-group">
+                        <input type="date" id="signupDob" placeholder="Date of Birth">
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="signupCity" placeholder="City">
+                    </div>
                 </div>
                 <div class="input-group">
                     <input type="password" id="signupPassword" placeholder="Password">
@@ -284,8 +338,8 @@
     </div>
 
     <script>
-        // Load saved users from localStorage
-        let users = JSON.parse(localStorage.getItem('ludoUsers')) || [];
+        // Load users
+        let users = JSON.parse(localStorage.getItem('dreamLudoUsers')) || [];
 
         function switchTab(tab) {
             const loginForm = document.getElementById('loginForm');
@@ -337,7 +391,6 @@
             const password = document.getElementById('signupPassword').value;
             const confirmPassword = document.getElementById('signupConfirmPassword').value;
 
-            // Validation
             if(!name) {
                 showError('Please enter your full name');
                 return;
@@ -375,14 +428,12 @@
                 return;
             }
 
-            // Check if mobile already exists
             const existingUser = users.find(u => u.mobile === mobile);
             if(existingUser) {
                 showError('Mobile number already registered. Please login.');
                 return;
             }
 
-            // Create new user
             const newUser = {
                 name: name,
                 mobile: mobile,
@@ -393,11 +444,10 @@
             };
             
             users.push(newUser);
-            localStorage.setItem('ludoUsers', JSON.stringify(users));
+            localStorage.setItem('dreamLudoUsers', JSON.stringify(users));
             
             showSuccess('Account created successfully! Please login.');
             
-            // Clear signup form
             document.getElementById('signupName').value = '';
             document.getElementById('signupMobile').value = '';
             document.getElementById('signupDob').value = '';
@@ -405,7 +455,6 @@
             document.getElementById('signupPassword').value = '';
             document.getElementById('signupConfirmPassword').value = '';
             
-            // Switch to login tab
             setTimeout(() => {
                 switchTab('login');
             }, 1500);
@@ -428,12 +477,10 @@
                 return;
             }
 
-            // Find user
             const user = users.find(u => u.mobile === mobile && u.password === password);
             
             if(user) {
-                // Successful login
-                sessionStorage.setItem('currentUser', JSON.stringify({
+                sessionStorage.setItem('dreamUser', JSON.stringify({
                     name: user.name,
                     mobile: user.mobile,
                     city: user.city
@@ -446,7 +493,6 @@
                     window.location.href = 'dashboard.html';
                 }, 1000);
             } else {
-                // Check if mobile exists but password wrong
                 const mobileExists = users.find(u => u.mobile === mobile);
                 if(mobileExists) {
                     showError('Incorrect password');
@@ -456,33 +502,16 @@
             }
         }
 
-        function guestLogin() {
-            sessionStorage.setItem('currentUser', JSON.stringify({
-                name: 'Guest Player',
-                mobile: 'guest',
-                city: 'Guest City'
-            }));
-            sessionStorage.setItem('playerName', 'Guest Player');
-            sessionStorage.setItem('isGuest', 'true');
-            
-            showSuccess('Playing as Guest!');
-            
-            setTimeout(() => {
-                window.location.href = 'dashboard.html';
-            }, 800);
-        }
-
-        // Remove outlines from all elements
-        document.querySelectorAll('input, button, select').forEach(el => {
-            el.style.outline = 'none';
-        });
-
-        // Add demo account hint
+        // Add demo account for testing
         if(users.length === 0) {
-            // Add a demo account for testing
-            setTimeout(() => {
-                console.log('No users found. Create an account to login.');
-            }, 100);
+            users.push({
+                name: 'Demo User',
+                mobile: '9876543210',
+                dob: '1990-01-01',
+                city: 'Mumbai',
+                password: '1234'
+            });
+            localStorage.setItem('dreamLudoUsers', JSON.stringify(users));
         }
     </script>
 </body>
