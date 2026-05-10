@@ -35,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* Header */
         .header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -113,7 +112,6 @@
             transform: translateY(-2px);
         }
 
-        /* Game Layout */
         .game-layout {
             display: flex;
             gap: 20px;
@@ -130,6 +128,7 @@
             padding: 20px;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
             border: 2px solid rgba(255, 255, 255, 0.5);
+            position: relative;
         }
 
         canvas {
@@ -137,7 +136,7 @@
             display: block;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            background: #f5e6d3; /* Fallback color while image loads */
+            background: #f5e6d3;
         }
 
         .game-sidebar {
@@ -217,6 +216,43 @@
 
         .turn-green {
             color: #2e7d32;
+        }
+
+        .piece-selector {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .piece-btn {
+            flex: 1;
+            padding: 10px;
+            background: #f0f2f5;
+            border: 2px solid #e2e6ed;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .piece-btn:hover:not(:disabled) {
+            background: #4a6cf7;
+            color: white;
+            border-color: #4a6cf7;
+        }
+
+        .piece-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .piece-btn.active-piece {
+            background: #4a6cf7;
+            color: white;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74,108,247,0.3);
         }
 
         .stats-panel {
@@ -300,21 +336,29 @@
                         <div class="dice-display" id="diceValue">1</div>
                         <button class="roll-btn" id="rollBtn">🎲 ROLL DICE</button>
                     </div>
+                    
+                    <div class="piece-selector" id="pieceSelector">
+                        <button class="piece-btn" data-piece="0">Piece 1</button>
+                        <button class="piece-btn" data-piece="1">Piece 2</button>
+                        <button class="piece-btn" data-piece="2">Piece 3</button>
+                        <button class="piece-btn" data-piece="3">Piece 4</button>
+                    </div>
+                    
                     <div class="turn-indicator" id="turnIndicator">🔴 Red's Turn</div>
                     <div class="message-area" id="messageArea">
-                        Click Roll Dice to start!
+                        Click Roll Dice, then select a piece to move!
                     </div>
                 </div>
 
                 <div class="stats-panel">
                     <h3>📊 Game Stats</h3>
                     <div class="stat-item">
-                        <span>🔴 Red Pieces Out:</span>
-                        <span id="redCount">0</span>
+                        <span>🔴 Red Pieces:</span>
+                        <span id="redCount">0/4 at goal</span>
                     </div>
                     <div class="stat-item">
-                        <span>🟢 Green Pieces Out:</span>
-                        <span id="greenCount">0</span>
+                        <span>🟢 Green Pieces:</span>
+                        <span id="greenCount">0/4 at goal</span>
                     </div>
                     <div class="stat-item">
                         <span>🎲 Last Roll:</span>
@@ -334,12 +378,9 @@
             document.getElementById('playerCityDisplay').innerText = userData.city || 'City';
             const firstLetter = (userData.name || 'P').charAt(0).toUpperCase();
             document.getElementById('avatarIcon').innerHTML = firstLetter;
-        } else {
-            document.getElementById('playerNameDisplay').innerText = 'Player';
-            document.getElementById('playerCityDisplay').innerText = 'City';
         }
         
-        // --- Game Logic ---
+        // --- Game State ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const rollBtn = document.getElementById('rollBtn');
@@ -351,44 +392,111 @@
         let diceValue = 1;
         let currentPlayer = 'red';
         let rolling = false;
+        let waitingForPieceSelection = false;
+        let lastRollValue = 0;
+        
+        // Piece positions: -1=home, 0-51=path, 52=goal
         let redPieces = [-1, -1, -1, -1];
         let greenPieces = [-1, -1, -1, -1];
-        let lastRoll = null;
-
-        // Load and draw the Ludo board image
+        
+        // Visual positions
+        let redPositions = [
+            { x: 80, y: 440 }, { x: 120, y: 440 },
+            { x: 160, y: 440 }, { x: 200, y: 440 }
+        ];
+        
+        let greenPositions = [
+            { x: 80, y: 530 }, { x: 120, y: 530 },
+            { x: 160, y: 530 }, { x: 200, y: 530 }
+        ];
+        
+        let redGoalPositions = [
+            { x: 470, y: 440 }, { x: 500, y: 440 },
+            { x: 470, y: 470 }, { x: 500, y: 470 }
+        ];
+        
+        let greenGoalPositions = [
+            { x: 520, y: 440 }, { x: 550, y: 440 },
+            { x: 520, y: 470 }, { x: 550, y: 470 }
+        ];
+        
+        // Path positions
+        let pathPositions = [];
+        for(let i = 0; i < 52; i++) {
+            let row = Math.floor(i / 13);
+            let col = i % 13;
+            pathPositions.push({
+                x: 50 + col * 38 + 15,
+                y: 50 + row * 38 + 15
+            });
+        }
+        
+        // Load board image
         const boardImage = new Image();
         boardImage.crossOrigin = "Anonymous";
         boardImage.src = "https://i.imgur.com/2rCkSof.jpeg";
-        
-        // Function to draw the entire game (image + pieces + dice)
         function drawGame() {
-            // Clear canvas
             ctx.clearRect(0, 0, 600, 600);
             
-            // Draw the board image
             if (boardImage.complete && boardImage.naturalHeight !== 0) {
                 ctx.drawImage(boardImage, 0, 0, 600, 600);
             } else {
-                // Fallback while loading or if image fails
                 ctx.fillStyle = '#f5e6d3';
                 ctx.fillRect(0, 0, 600, 600);
                 ctx.fillStyle = '#999';
                 ctx.font = '16px Arial';
                 ctx.fillText("Loading board...", 250, 300);
-                // Also draw a basic grid as fallback
-                for(let i = 0; i < 52; i++) {
-                    let x = 50 + (i % 13) * 38;
-                    let y = 50 + Math.floor(i / 13) * 38;
-                    ctx.strokeStyle = '#ddd';
-                    ctx.strokeRect(x, y, 35, 35);
-                }
             }
             
-            // Draw pieces on top of the board
-            drawPieces(redPieces, 'red');
-            drawPieces(greenPieces, 'green');
+            drawAllPieces();
+            drawDice();
+        }
+        
+        function drawAllPieces() {
+            for(let i = 0; i < redPieces.length; i++) {
+                let pos = redPieces[i];
+                let x, y;
+                if(pos === -1) { x = redPositions[i].x; y = redPositions[i].y; }
+                else if(pos === 52) { x = redGoalPositions[i].x; y = redGoalPositions[i].y; }
+                else { x = pathPositions[pos].x; y = pathPositions[pos].y; }
+                drawPiece(x, y, 'red', i+1);
+            }
             
-            // Draw custom dice (white with blue border)
+            for(let i = 0; i < greenPieces.length; i++) {
+                let pos = greenPieces[i];
+                let x, y;
+                if(pos === -1) { x = greenPositions[i].x; y = greenPositions[i].y; }
+                else if(pos === 52) { x = greenGoalPositions[i].x; y = greenGoalPositions[i].y; }
+                else { x = pathPositions[pos].x; y = pathPositions[pos].y; }
+                drawPiece(x, y, 'green', i+1);
+            }
+        }
+        
+        function drawPiece(x, y, color, number) {
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI*2);
+            const gradient = ctx.createLinearGradient(x-5, y-5, x+5, y+5);
+            if(color === 'red') {
+                gradient.addColorStop(0, '#ff5252');
+                gradient.addColorStop(1, '#d32f2f');
+            } else {
+                gradient.addColorStop(0, '#66bb6a');
+                gradient.addColorStop(1, '#2e7d32');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px "Segoe UI"';
+            ctx.shadowBlur = 0;
+            ctx.fillText(number, x-6, y+6);
+        }
+        
+        function drawDice() {
             ctx.fillStyle = '#ffffff';
             ctx.shadowBlur = 0;
             ctx.fillRect(480, 50, 70, 70);
@@ -400,73 +508,12 @@
             ctx.fillText(diceValue, 507, 98);
         }
         
-        function drawPieces(pieces, color) {
-            for(let i = 0; i < pieces.length; i++) {
-                let pos = pieces[i];
-                let x, y;
-                
-                if(pos === -1) { // Home position based on color
-                    if(color === 'red') { 
-                        x = 60 + i * 38; 
-                        y = 440; 
-                    } else { 
-                        x = 60 + i * 38; 
-                        y = 530; 
-                    }
-                } else if(pos === 52) { // Goal area
-                    if(color === 'red') {
-                        x = 470;
-                        y = 440 + i * 30;
-                    } else {
-                        x = 520;
-                        y = 440 + i * 30;
-                    }
-                } else {
-                    // Map position index to canvas coordinates
-                    const row = Math.floor(pos / 13);
-                    const col = pos % 13;
-                    x = 50 + col * 38 + 15;
-                    y = 50 + row * 38 + 15;
-                }
-                
-                // Draw piece with shadow
-                ctx.shadowBlur = 4;
-                ctx.shadowColor = "rgba(0,0,0,0.3)";
-                ctx.beginPath();
-                ctx.arc(x, y, 14, 0, Math.PI*2);
-                
-                // Colorful gradient for pieces
-                const gradient = ctx.createLinearGradient(x-5, y-5, x+5, y+5);
-                if(color === 'red') {
-                    gradient.addColorStop(0, '#ff5252');
-                    gradient.addColorStop(1, '#d32f2f');
-                } else {
-                    gradient.addColorStop(0, '#66bb6a');
-                    gradient.addColorStop(1, '#2e7d32');
-                }
-                ctx.fillStyle = gradient;
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                
-                // Piece number
-                ctx.fillStyle = 'white';
-                ctx.font = 'bold 16px "Segoe UI"';
-                ctx.shadowBlur = 0;
-                ctx.fillText(i+1, x-6, y+6);
-            }
-        }
-        
-        // --- Game Logic (Move, Roll, etc.) ---
-        function updateStats() {
-            const redOut = redPieces.filter(p => p !== -1 && p !== 52).length;
-            const greenOut = greenPieces.filter(p => p !== -1 && p !== 52).length;
-            document.getElementById('redCount').innerText = redOut;
-            document.getElementById('greenCount').innerText = greenOut;
-        }
-        
-        function updateTurnDisplay() {
+        function updateUI() {
+            const redGoalCount = redPieces.filter(p => p === 52).length;
+            const greenGoalCount = greenPieces.filter(p => p === 52).length;
+            document.getElementById('redCount').innerText = `${redGoalCount}/4 at goal`;
+            document.getElementById('greenCount').innerText = `${greenGoalCount}/4 at goal`;
+            
             if(currentPlayer === 'red') {
                 turnIndicator.innerHTML = '🔴 Red\'s Turn';
                 turnIndicator.className = 'turn-indicator turn-red';
@@ -476,8 +523,137 @@
             }
         }
         
+        function getMovablePieces() {
+            const pieces = (currentPlayer === 'red') ? redPieces : greenPieces;
+            const movable = [];
+            for(let i = 0; i < pieces.length; i++) {
+                if(pieces[i] === -1 && diceValue === 6) {
+                    movable.push(i);
+                } else if(pieces[i] !== -1 && pieces[i] !== 52) {
+                    if(pieces[i] + diceValue <= 52) {
+                        movable.push(i);
+                    }
+                }
+            }
+            return movable;
+        }
+        
+        function movePiece(pieceIndex) {
+            if(!waitingForPieceSelection) {
+                messageArea.innerText = "Please roll the dice first!";
+                return;
+            }
+            
+            const pieces = (currentPlayer === 'red') ? redPieces : greenPieces;
+            const piecePos = pieces[pieceIndex];
+            let moved = false;
+            
+            if(piecePos === -1 && diceValue === 6) {
+                pieces[pieceIndex] = 0;
+                moved = true;
+                messageArea.innerText = `Piece ${pieceIndex+1} entered the board! 🎉`;
+            } else if(piecePos !== -1 && piecePos !== 52) {
+                const newPos = piecePos + diceValue;
+                if(newPos <= 52) {
+                    pieces[pieceIndex] = newPos;
+                    moved = true;
+                    if(newPos === 52) {
+                        messageArea.innerText = `🏆 Piece ${pieceIndex+1} reached the goal! 🏆`;
+                    } else {
+                        messageArea.innerText = `Piece ${pieceIndex+1} moved ${diceValue} steps!`;
+                    }
+                }
+            }
+            
+            if(moved) {
+                waitingForPieceSelection = false;
+                lastRollSpan.innerText = diceValue;
+                updateUI();
+                drawGame();
+                
+                const allFinished = pieces.every(p => p === 52);
+                if(allFinished) {
+                    messageArea.innerText += ` 🎉🎊 ${currentPlayer.toUpperCase()} WINS! 🎊🎉`;
+                    rollBtn.disabled = true;
+                    return;
+                }
+                
+                if(diceValue !== 6) {
+                    currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+                    updateUI();
+                    messageArea.innerText += ` Now ${currentPlayer.toUpperCase()}'s turn.`;
+                } else {
+                    messageArea.innerText += ` You got a 6! Roll again.`;
+                    waitingForPieceSelection = true;
+                    const newMovable = getMovablePieces();
+                    if(newMovable.length === 0) {
+                        messageArea.innerText += ` No pieces can move. Turn changes.`;
+                        currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+                        waitingForPieceSelection = false;
+                        updateUI();
+                    } else {
+                        highlightMovablePieces();
+                        return;
+                    }
+                }
+                
+                const newMovable = getMovablePieces();
+                if(newMovable.length === 0 && !waitingForPieceSelection) {
+                    messageArea.innerText += ` No moves available. Turn changes.`;
+                    currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+                    updateUI();
+                }
+                diceValue = 1;
+                diceValueDisplay.innerText = '1';
+                drawGame();
+            } else {
+                messageArea.innerText = `Cannot move Piece ${pieceIndex+1}!`;
+            }
+            removePieceHighlights();
+        }
+        
+        function highlightMovablePieces() {
+            const movable = getMovablePieces();
+            const buttons = document.querySelectorAll('.piece-btn');
+            buttons.forEach((btn, idx) => {
+                if(movable.includes(idx)) {
+                    btn.disabled = false;
+                    btn.classList.add('active-piece');
+                } else {
+                    btn.disabled = true;
+                    btn.classList.remove('active-piece');
+                }
+            });
+            
+            if(movable.length === 0) {
+                messageArea.innerText = `No pieces can move!`;
+                if(diceValue !== 6) {
+                    setTimeout(() => {
+                        currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+                        waitingForPieceSelection = false;
+                        updateUI();
+                        messageArea.innerText = `${currentPlayer.toUpperCase()}'s turn. Roll dice!`;
+                        drawGame();
+                    }, 1500);
+                }
+            }
+        }
+        
+        function removePieceHighlights() {
+            const buttons = document.querySelectorAll('.piece-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                btn.classList.remove('active-piece');
+            });
+        }
+        
         function rollDice() {
             if(rolling) return;
+            if(waitingForPieceSelection) {
+                messageArea.innerText = "Please select a piece to move first!";
+                return;
+            }
+            
             rolling = true;
             rollBtn.disabled = true;
             messageArea.innerText = `${currentPlayer.toUpperCase()} is rolling dice...`;
@@ -486,65 +662,35 @@
             const interval = setInterval(() => {
                 diceValue = Math.floor(Math.random() * 6) + 1;
                 diceValueDisplay.innerText = diceValue;
-                drawGame(); // Redraw with new dice value
+                drawGame();
                 rolls++;
                 if(rolls > 12) {
                     clearInterval(interval);
                     rolling = false;
-                    lastRoll = diceValue;
-                    lastRollSpan.innerText = diceValue;
-                    handleMove();
                     rollBtn.disabled = false;
+                    
+                    waitingForPieceSelection = true;
+                    const movable = getMovablePieces();
+                    
+                    if(movable.length === 0) {
+                        messageArea.innerText = `${currentPlayer.toUpperCase()} rolled ${diceValue} but no moves! Turn changes.`;
+                        setTimeout(() => {
+                            currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+                            waitingForPieceSelection = false;
+                            updateUI();
+                            messageArea.innerText = `${currentPlayer.toUpperCase()}'s turn. Roll dice!`;
+                            drawGame();
+                        }, 1500);
+                        diceValue = 1;
+                        diceValueDisplay.innerText = '1';
+                        drawGame();
+                    } else {
+                        messageArea.innerText = `${currentPlayer.toUpperCase()} rolled ${diceValue}! Select a piece:`;
+                        highlightMovablePieces();
+                    }
+                    updateUI();
                 }
             }, 80);
-        }
-        
-        function handleMove() {
-            messageArea.innerText = `${currentPlayer.toUpperCase()} rolled a ${diceValue}!`;
-            
-            let pieces = (currentPlayer === 'red') ? redPieces : greenPieces;
-            let moved = false;
-            
-            for(let i = 0; i < pieces.length; i++) {
-                if(pieces[i] === -1 && diceValue === 6) {
-                    pieces[i] = 0;
-                    moved = true;
-                    messageArea.innerText += ` Piece ${i+1} entered the board! 🎉`;
-                    break;
-                } else if(pieces[i] !== -1 && pieces[i] !== 52) {
-                    let newPos = pieces[i] + diceValue;
-                    if(newPos < 52) {
-                        pieces[i] = newPos;
-                        moved = true;
-                        messageArea.innerText += ` Piece ${i+1} moved`;
-                        break;
-                    } else if(newPos === 52) {
-                        pieces[i] = 52;
-                        moved = true;
-                        messageArea.innerText += ` 🏆 Piece ${i+1} reached goal! 🏆`;
-                        const allFinished = pieces.every(p => p === 52);
-                        if(allFinished) {
-                            messageArea.innerText += ` 🎉🎊 ${currentPlayer.toUpperCase()} WINS! 🎊🎉`;
-                            rollBtn.disabled = true;
-                            drawGame();
-                            return;
-                        }
-                        break;
-                    }
-                }
-            }
-            
-            if(!moved && diceValue !== 6) {
-                messageArea.innerText += ` No moves available!`;
-            }
-            
-            if(diceValue !== 6 || !moved) {
-                currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
-            }
-            
-            updateTurnDisplay();
-            updateStats();
-            drawGame();
         }
         
         function logout() {
@@ -552,24 +698,24 @@
             window.location.href = 'index.html';
         }
         
-        // Event listener and initial draws
         rollBtn.onclick = rollDice;
+        document.querySelectorAll('.piece-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const pieceIndex = parseInt(btn.getAttribute('data-piece'));
+                movePiece(pieceIndex);
+            });
+            btn.disabled = true;
+        });
         
-        boardImage.onload = () => {
-            drawGame();
-        };
-        boardImage.onerror = () => {
-            console.warn("Board image failed to load, using fallback.");
-            drawGame();
-        };
+        boardImage.onload = () => { drawGame(); };
+        boardImage.onerror = () => { drawGame(); };
         
-        updateTurnDisplay();
-        updateStats();
-        drawGame(); // Initial draw (will show loading/fallback until image loads)
+        updateUI();
+        drawGame();
         
         setTimeout(() => {
             const name = userData ? userData.name : 'Player';
-            messageArea.innerText = `Welcome ${name}! 🎲 Roll a 6 to bring pieces out.`;
+            messageArea.innerText = `Welcome ${name}! 🎲 Click ROLL DICE, then select a piece.`;
         }, 1000);
     </script>
 </body>
