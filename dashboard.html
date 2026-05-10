@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>DreamLudo - Play</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 1400px;
+            height: 95vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+        }
+
+        .logo h2 {
+            background: linear-gradient(135deg, #4a6cf7 0%, #7b4ad7 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f8f9fc;
+            padding: 8px 20px;
+            border-radius: 50px;
+            border: 1px solid #e2e6ed;
+        }
+
+        .player-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #4a6cf7 0%, #7b4ad7 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .player-details {
+            text-align: right;
+        }
+
+        .player-name {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .player-city {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 50px;
+            padding: 8px 20px;
+            color: #d32f2f;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .logout-btn:hover {
+            background: #fdd;
+            transform: translateY(-2px);
+        }
+
+        /* Game Layout */
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .game-board {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+
+        canvas {
+            border-radius: 16px;
+            display: block;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            background: #f5e6d3; /* Fallback color while image loads */
+        }
+
+        .game-sidebar {
+            flex: 1;
+            min-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .dice-area {
+            margin-bottom: 25px;
+        }
+
+        .dice-display {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #4a6cf7 0%, #7b4ad7 100%);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            font-weight: bold;
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
+        }
+
+        .roll-btn {
+            background: linear-gradient(135deg, #4a6cf7 0%, #7b4ad7 100%);
+            border: none;
+            border-radius: 60px;
+            padding: 14px 35px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+        }
+
+        .roll-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(74, 108, 247, 0.4);
+        }
+
+        .roll-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .turn-indicator {
+            margin-top: 20px;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 60px;
+            background: #f0f2f5;
+            border: 1px solid #e2e6ed;
+        }
+
+        .turn-red {
+            color: #d32f2f;
+        }
+
+        .turn-green {
+            color: #2e7d32;
+        }
+
+        .stats-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .stats-panel h3 {
+            background: linear-gradient(135deg, #4a6cf7 0%, #7b4ad7 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e2e6ed;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .message-area {
+            margin-top: 20px;
+            padding: 12px;
+            background: #f0f2f5;
+            border-radius: 16px;
+            color: #333;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid #e2e6ed;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                height: 100vh;
+                padding: 15px;
+            }
+            .game-layout {
+                overflow-y: auto;
+            }
+            canvas {
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <div class="logo">
+                <h2>🎲 DreamLudo</h2>
+            </div>
+            <div class="player-info">
+                <div class="player-avatar" id="avatarIcon">🎮</div>
+                <div class="player-details">
+                    <div class="player-name" id="playerNameDisplay">Player</div>
+                    <div class="player-city" id="playerCityDisplay">City</div>
+                </div>
+                <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="game-layout">
+            <div class="game-board">
+                <canvas id="gameCanvas" width="600" height="600"></canvas>
+            </div>
+
+            <div class="game-sidebar">
+                <div class="control-panel">
+                    <div class="dice-area">
+                        <div class="dice-display" id="diceValue">1</div>
+                        <button class="roll-btn" id="rollBtn">🎲 ROLL DICE</button>
+                    </div>
+                    <div class="turn-indicator" id="turnIndicator">🔴 Red's Turn</div>
+                    <div class="message-area" id="messageArea">
+                        Click Roll Dice to start!
+                    </div>
+                </div>
+
+                <div class="stats-panel">
+                    <h3>📊 Game Stats</h3>
+                    <div class="stat-item">
+                        <span>🔴 Red Pieces Out:</span>
+                        <span id="redCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🟢 Green Pieces Out:</span>
+                        <span id="greenCount">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span>🎲 Last Roll:</span>
+                        <span id="lastRoll">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get user data
+        const userData = JSON.parse(sessionStorage.getItem('dreamUser'));
+        
+        if(userData) {
+            document.getElementById('playerNameDisplay').innerText = userData.name || 'Player';
+            document.getElementById('playerCityDisplay').innerText = userData.city || 'City';
+            const firstLetter = (userData.name || 'P').charAt(0).toUpperCase();
+            document.getElementById('avatarIcon').innerHTML = firstLetter;
+        } else {
+            document.getElementById('playerNameDisplay').innerText = 'Player';
+            document.getElementById('playerCityDisplay').innerText = 'City';
+        }
+        
+        // --- Game Logic ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const rollBtn = document.getElementById('rollBtn');
+        const messageArea = document.getElementById('messageArea');
+        const turnIndicator = document.getElementById('turnIndicator');
+        const diceValueDisplay = document.getElementById('diceValue');
+        const lastRollSpan = document.getElementById('lastRoll');
+        
+        let diceValue = 1;
+        let currentPlayer = 'red';
+        let rolling = false;
+        let redPieces = [-1, -1, -1, -1];
+        let greenPieces = [-1, -1, -1, -1];
+        let lastRoll = null;
+
+        // Load and draw the Ludo board image
+        const boardImage = new Image();
+        boardImage.crossOrigin = "Anonymous";
+        boardImage.src = "https://i.imgur.com/2rCkSof.jpeg";
+        
+        // Function to draw the entire game (image + pieces + dice)
+        function drawGame() {
+            // Clear canvas
+            ctx.clearRect(0, 0, 600, 600);
+            
+            // Draw the board image
+            if (boardImage.complete && boardImage.naturalHeight !== 0) {
+                ctx.drawImage(boardImage, 0, 0, 600, 600);
+            } else {
+                // Fallback while loading or if image fails
+                ctx.fillStyle = '#f5e6d3';
+                ctx.fillRect(0, 0, 600, 600);
+                ctx.fillStyle = '#999';
+                ctx.font = '16px Arial';
+                ctx.fillText("Loading board...", 250, 300);
+                // Also draw a basic grid as fallback
+                for(let i = 0; i < 52; i++) {
+                    let x = 50 + (i % 13) * 38;
+                    let y = 50 + Math.floor(i / 13) * 38;
+                    ctx.strokeStyle = '#ddd';
+                    ctx.strokeRect(x, y, 35, 35);
+                }
+            }
+            
+            // Draw pieces on top of the board
+            drawPieces(redPieces, 'red');
+            drawPieces(greenPieces, 'green');
+            
+            // Draw custom dice (white with blue border)
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowBlur = 0;
+            ctx.fillRect(480, 50, 70, 70);
+            ctx.strokeStyle = '#4a6cf7';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(480, 50, 70, 70);
+            ctx.fillStyle = '#4a6cf7';
+            ctx.font = 'bold 36px "Segoe UI"';
+            ctx.fillText(diceValue, 507, 98);
+        }
+        
+        function drawPieces(pieces, color) {
+            for(let i = 0; i < pieces.length; i++) {
+                let pos = pieces[i];
+                let x, y;
+                
+                if(pos === -1) { // Home position based on color
+                    if(color === 'red') { 
+                        x = 60 + i * 38; 
+                        y = 440; 
+                    } else { 
+                        x = 60 + i * 38; 
+                        y = 530; 
+                    }
+                } else if(pos === 52) { // Goal area
+                    if(color === 'red') {
+                        x = 470;
+                        y = 440 + i * 30;
+                    } else {
+                        x = 520;
+                        y = 440 + i * 30;
+                    }
+                } else {
+                    // Map position index to canvas coordinates
+                    const row = Math.floor(pos / 13);
+                    const col = pos % 13;
+                    x = 50 + col * 38 + 15;
+                    y = 50 + row * 38 + 15;
+                }
+                
+                // Draw piece with shadow
+                ctx.shadowBlur = 4;
+                ctx.shadowColor = "rgba(0,0,0,0.3)";
+                ctx.beginPath();
+                ctx.arc(x, y, 14, 0, Math.PI*2);
+                
+                // Colorful gradient for pieces
+                const gradient = ctx.createLinearGradient(x-5, y-5, x+5, y+5);
+                if(color === 'red') {
+                    gradient.addColorStop(0, '#ff5252');
+                    gradient.addColorStop(1, '#d32f2f');
+                } else {
+                    gradient.addColorStop(0, '#66bb6a');
+                    gradient.addColorStop(1, '#2e7d32');
+                }
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Piece number
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 16px "Segoe UI"';
+                ctx.shadowBlur = 0;
+                ctx.fillText(i+1, x-6, y+6);
+            }
+        }
+        
+        // --- Game Logic (Move, Roll, etc.) ---
+        function updateStats() {
+            const redOut = redPieces.filter(p => p !== -1 && p !== 52).length;
+            const greenOut = greenPieces.filter(p => p !== -1 && p !== 52).length;
+            document.getElementById('redCount').innerText = redOut;
+            document.getElementById('greenCount').innerText = greenOut;
+        }
+        
+        function updateTurnDisplay() {
+            if(currentPlayer === 'red') {
+                turnIndicator.innerHTML = '🔴 Red\'s Turn';
+                turnIndicator.className = 'turn-indicator turn-red';
+            } else {
+                turnIndicator.innerHTML = '🟢 Green\'s Turn';
+                turnIndicator.className = 'turn-indicator turn-green';
+            }
+        }
+        
+        function rollDice() {
+            if(rolling) return;
+            rolling = true;
+            rollBtn.disabled = true;
+            messageArea.innerText = `${currentPlayer.toUpperCase()} is rolling dice...`;
+            
+            let rolls = 0;
+            const interval = setInterval(() => {
+                diceValue = Math.floor(Math.random() * 6) + 1;
+                diceValueDisplay.innerText = diceValue;
+                drawGame(); // Redraw with new dice value
+                rolls++;
+                if(rolls > 12) {
+                    clearInterval(interval);
+                    rolling = false;
+                    lastRoll = diceValue;
+                    lastRollSpan.innerText = diceValue;
+                    handleMove();
+                    rollBtn.disabled = false;
+                }
+            }, 80);
+        }
+        
+        function handleMove() {
+            messageArea.innerText = `${currentPlayer.toUpperCase()} rolled a ${diceValue}!`;
+            
+            let pieces = (currentPlayer === 'red') ? redPieces : greenPieces;
+            let moved = false;
+            
+            for(let i = 0; i < pieces.length; i++) {
+                if(pieces[i] === -1 && diceValue === 6) {
+                    pieces[i] = 0;
+                    moved = true;
+                    messageArea.innerText += ` Piece ${i+1} entered the board! 🎉`;
+                    break;
+                } else if(pieces[i] !== -1 && pieces[i] !== 52) {
+                    let newPos = pieces[i] + diceValue;
+                    if(newPos < 52) {
+                        pieces[i] = newPos;
+                        moved = true;
+                        messageArea.innerText += ` Piece ${i+1} moved`;
+                        break;
+                    } else if(newPos === 52) {
+                        pieces[i] = 52;
+                        moved = true;
+                        messageArea.innerText += ` 🏆 Piece ${i+1} reached goal! 🏆`;
+                        const allFinished = pieces.every(p => p === 52);
+                        if(allFinished) {
+                            messageArea.innerText += ` 🎉🎊 ${currentPlayer.toUpperCase()} WINS! 🎊🎉`;
+                            rollBtn.disabled = true;
+                            drawGame();
+                            return;
+                        }
+                        break;
+                    }
+                }
+            }
+            
+            if(!moved && diceValue !== 6) {
+                messageArea.innerText += ` No moves available!`;
+            }
+            
+            if(diceValue !== 6 || !moved) {
+                currentPlayer = (currentPlayer === 'red') ? 'green' : 'red';
+            }
+            
+            updateTurnDisplay();
+            updateStats();
+            drawGame();
+        }
+        
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'index.html';
+        }
+        
+        // Event listener and initial draws
+        rollBtn.onclick = rollDice;
+        
+        boardImage.onload = () => {
+            drawGame();
+        };
+        boardImage.onerror = () => {
+            console.warn("Board image failed to load, using fallback.");
+            drawGame();
+        };
+        
+        updateTurnDisplay();
+        updateStats();
+        drawGame(); // Initial draw (will show loading/fallback until image loads)
+        
+        setTimeout(() => {
+            const name = userData ? userData.name : 'Player';
+            messageArea.innerText = `Welcome ${name}! 🎲 Roll a 6 to bring pieces out.`;
+        }, 1000);
+    </script>
+</body>
+</html>
